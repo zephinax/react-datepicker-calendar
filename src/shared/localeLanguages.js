@@ -34,7 +34,7 @@ const localeLanguages = {
     closeYearSelector: 'Close Year Selector',
     from: 'from',
     to: 'to',
-    defaultPlaceholder: 'Select...',
+    defaultPlaceholder: 'Select date',
     digitSeparator: ',',
     yearLetterSkip: 0,
     isRtl: false,

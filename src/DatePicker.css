@@ -7,7 +7,8 @@
 .DatePicker__input {
   background: #fff;
   border: 1px solid #ddd;
-  padding: 0.4em 0.8em;
+  padding: 0.6em 1em;
+  border-radius: 0.6em;
   font-family: inherit;
   text-align: center;
   font-size: 12px;
@@ -64,15 +65,19 @@
   border-style: solid;
   z-index: 10;
   border-width: 0 10px 10px 10px;
-  border-color: transparent transparent #fff transparent;
+  border-color: transparent transparent #ffffff60 transparent; /* شفاف */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .Calendar {
   --cl-color-black: #444444;
-  --cl-color-disabled: #d4d4d4;
+  --cl-color-disabled: #bbbbbb;
   --cl-color-error: #ff2929;
   font-size: 10px;
-  background: #fff;
+  background: #ffffff60;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   box-shadow: 0 1em 4em rgba(0, 0, 0, 0.07);
   border-radius: 1.4em;
   position: relative;
@@ -248,10 +253,10 @@
 .Calendar__monthYear.-shown > *:hover,
 .Calendar:not(.-noFocusOutline) .Calendar__monthYear.-shown > *:focus,
 .Calendar__monthYear > *.-activeBackground {
-  background: #f5f5f5;
+  background: #ffffff70;
 }
 
-.Calendar__monthText:hover {
+/*.Calendar__monthText:hover {
   transform: translateX(-0.2em) scale(0.95);
 }
 .Calendar.-rtl .Calendar__monthText:hover {
@@ -263,7 +268,7 @@
 }
 .Calendar.-rtl .Calendar__yearText:hover {
   transform: translateX(-0.2em) scale(0.95);
-}
+}*/
 
 .Calendar__monthYear .Calendar__yearText.-hidden {
   transform: translateX(50%);
@@ -309,6 +314,7 @@
 
 .Calendar__monthSelector {
   padding: 0 2.5em;
+  margin: 6px;
   align-content: center;
   padding-bottom: 2em;
 }
@@ -319,11 +325,12 @@
   flex-wrap: wrap;
   position: relative;
   z-index: 2;
-  background-color: #fff;
+  border-radius: 1em;
+  background: #fff;
   transform: translateY(-150%);
   will-change: transform;
   transition: 0.6s;
-  height: 100%;
+  height: calc(100% - 12px);
 }
 
 .Calendar__yearSelectorWrapper {
@@ -334,10 +341,10 @@
 .Calendar__yearSelectorWrapper::after,
 .Calendar__yearSelectorWrapper::before {
   content: '';
-  width: 100%;
+  width: calc(100% - 12px);
   height: 5em;
   position: absolute;
-  left: 0;
+  left: 6px;
   opacity: 0;
   transition: 0.4s;
   transition-delay: 0.2s;
@@ -345,12 +352,14 @@
 
 .Calendar__yearSelectorWrapper::after {
   background-image: linear-gradient(to bottom, #fff, #fff 10%, rgba(245, 245, 245, 0));
-  top: -0.1em;
+  top: 0;
+  border-radius: 1em 1em 0 0;
 }
 
 .Calendar__yearSelectorWrapper::before {
   background-image: linear-gradient(to top, #fff, #fff 10%, rgba(245, 245, 245, 0));
-  bottom: 0;
+  bottom: 6px;
+  border-radius: 0 0 1em 1em;
 }
 
 .Calendar__yearSelectorWrapper.-faded::after,
@@ -364,7 +373,8 @@
   scrollbar-width: 0;
   overflow: scroll;
   position: relative;
-  width: 100%;
+  width: calc(100% - 12px);
+  margin-inline: auto;
   padding: 5em 2em;
   -ms-overflow-style: none;
 }
@@ -542,7 +552,7 @@
 }
 
 .Calendar__day:not(.-blank):not(.-selectedStart):not(.-selectedEnd):not(.-selectedBetween):not(.-selected):hover {
-  background: #eaeaea;
+  background: #ffffff70;
   border-radius: 50%;
   color: var(--cl-color-black);
   border-color: transparent;
@@ -670,3 +680,12 @@
     transform: translateX(0);
   }
 }
+
+/*@media (prefers-color-scheme: dark) {
+  .DatePicker__calendarArrow {
+    border-color: transparent transparent #00000080 transparent !important;
+  }
+  .Calendar {
+    background: #00000080;
+  }
+}*/
