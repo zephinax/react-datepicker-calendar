@@ -1,0 +1,72 @@
+---
+title: API reference
+description: Props, value shapes, and behaviors for DatePicker and Calendar.
+---
+
+## Components and modes
+
+- `DatePicker`: input + calendar popper with managed open/close behavior.
+- `Calendar`: bare calendar grid for inline embedding.
+
+The selection mode is inferred from the `value` shape you pass:
+
+- Single: `Day | null`
+- Range: `{ from: Day | null; to: Day | null }`
+- Multi: `Day[]`
+
+`Day` is `{ year: number; month: number; day: number }`.
+
+## Behavior notes
+
+- `DatePicker` closes after a single selection or after both `from` and `to` are set for ranges.
+- Disabled days or out-of-range dates call `onDisabledDayError` and keep the current value.
+- `minimumDate` / `maximumDate` affect both navigation (arrows, month/year selectors) and clickability.
+- Keyboard: Arrow keys move focus across days; Enter selects; Tab cycles through focusable controls.
+
+## Shared props (DatePicker and Calendar)
+
+| Prop | Type | Notes | Default |
+| --- | --- | --- | --- |
+| `value` | `Day` \| `Day[]` \| `{ from: Day \| null; to: Day \| null }` | Controls mode; malformed shapes throw. | `null` |
+| `onChange` | `(nextValue) => void` | Receives the updated selection. | required |
+| `disabledDays` | `Day[]` | Exact days users cannot pick. | `[]` |
+| `onDisabledDayError` | `(day: Day) => void` | Invoked when a disabled/out-of-range day is attempted. | noop |
+| `minimumDate` / `maximumDate` | `Day` | Clamps navigation and selection. | `null` |
+| `selectorStartingYear` / `selectorEndingYear` | `number` | Limits year selector; defaults to today - 100 to today + 50. | `0` (auto) |
+| `shouldHighlightWeekends` | `boolean` | Weekend styling follows locale `weekDays`. | `false` |
+| `colorPrimary` / `colorPrimaryLight` | `string` | Accent colors mapped to CSS vars. | `#d24670` / `#edadc0` |
+| `slideAnimationDuration` | `string` | Duration for header/grid transitions (e.g., `0.4s`). | `0.4s` |
+| `locale` | `'en'` \| `'fa'` \| Locale object | Drives language, numbering, calendar system, direction, weekends. | `'en'` |
+| `calendarClassName` | `string` | Extra class on the calendar root. | `''` |
+| `calendarTodayClassName` | `string` | Applied to today when not selected. | `undefined` |
+| `calendarSelectedDayClassName` | `string` | Single/multi selected days. | `undefined` |
+| `calendarRangeStartClassName` / `calendarRangeEndClassName` / `calendarRangeBetweenClassName` | `string` | Range edge and in-between styling. | `undefined` |
+| `customDaysClassName` | `{ year: number; month: number; day: number; className: string }[]` | Per-day classes (holidays, events). | `[]` |
+| `renderFooter` | `() => ReactNode` | Footer area inside the calendar. | `() => null` |
+
+## DatePicker-only props
+
+| Prop | Type | Notes | Default |
+| --- | --- | --- | --- |
+| `inputPlaceholder` | `string` | Fallbacks to locale `defaultPlaceholder` when empty. | `''` |
+| `inputClassName` | `string` | Extra class on the input element. | `''` |
+| `inputName` | `string` | Passed to the input `name` attribute. | `''` |
+| `formatInputText` | `() => string` | When truthy, overrides the built-in formatted value. | `() => {}` |
+| `renderInput` | `({ ref }) => ReactNode` | Fully replace the input; forward `ref` to keep focus/blur logic. | `() => null` |
+| `wrapperClassName` | `string` | Class on the outer DatePicker wrapper. | `''` |
+| `calendarPopperPosition` | `'auto'` \| `'top'` | Allow flipping or force the popper above the input. | `'auto'` |
+
+## CSS hooks
+
+- Variables: `--cl-color-primary`, `--cl-color-primary-light`, `--animation-duration`.
+- Class hooks: today/selected/range classes and `customDaysClassName` for per-day overrides.
+- Structure: `wrapperClassName` (DatePicker root) and `calendarClassName` (calendar root) let you integrate with your design system without rewriting the base CSS in `lib/DatePicker.css`.
+
+## Locale helpers
+
+`utils(locale?)` exposes locale-aware helpers:
+
+- `getToday()`, `getMonthName(month)`, `getMonthNumber(name)`, `getMonthLength({ year, month })`
+- `getMonthFirstWeekday(date)` honors locale week start
+- `isBeforeDate(day1, day2)` and `checkDayInDayRange({ day, from, to })`
+- `getLanguageDigits(value)` for locale-specific digit rendering
