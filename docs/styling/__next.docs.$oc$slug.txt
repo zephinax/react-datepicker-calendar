@@ -1,0 +1,4 @@
+1:"$Sreact.fragment"
+2:I[96840,["https://react-datepicker-calendar.zephinax.com/_next/static/chunks/4d84ed645b3a3261.js","https://react-datepicker-calendar.zephinax.com/_next/static/chunks/e4f19b1e6576494f.js"],"default"]
+3:I[42060,["https://react-datepicker-calendar.zephinax.com/_next/static/chunks/4d84ed645b3a3261.js","https://react-datepicker-calendar.zephinax.com/_next/static/chunks/e4f19b1e6576494f.js"],"default"]
+0:{"buildId":"MM1igc4nUT293nDiWFWrI","rsc":["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]]}],"loading":null,"isPartial":false}

@@ -1,0 +1,9 @@
+1:"$Sreact.fragment"
+2:I[98083,["https://react-datepicker-calendar.zephinax.com/_next/static/chunks/4d84ed645b3a3261.js","https://react-datepicker-calendar.zephinax.com/_next/static/chunks/e4f19b1e6576494f.js"],"ClientPageRoot"]
+3:I[64157,["https://react-datepicker-calendar.zephinax.com/_next/static/chunks/cae398df71556943.js","https://react-datepicker-calendar.zephinax.com/_next/static/chunks/b0b278020206c323.js","https://react-datepicker-calendar.zephinax.com/_next/static/chunks/7fbdc734695841d8.js","https://react-datepicker-calendar.zephinax.com/_next/static/chunks/b542f7f8325044ed.js","https://react-datepicker-calendar.zephinax.com/_next/static/chunks/1c2b5302aeba017e.js","https://react-datepicker-calendar.zephinax.com/_next/static/chunks/17e9c2d2eade8fe3.js"],"default"]
+6:I[5144,["https://react-datepicker-calendar.zephinax.com/_next/static/chunks/4d84ed645b3a3261.js","https://react-datepicker-calendar.zephinax.com/_next/static/chunks/e4f19b1e6576494f.js"],"OutletBoundary"]
+7:"$Sreact.suspense"
+0:{"buildId":"MM1igc4nUT293nDiWFWrI","rsc":["$","$1","c",{"children":[["$","$L2",null,{"Component":"$3","serverProvidedParams":{"searchParams":{},"params":{},"promises":["$@4","$@5"]}}],[["$","script","script-0",{"src":"https://react-datepicker-calendar.zephinax.com/_next/static/chunks/17e9c2d2eade8fe3.js","async":true}]],["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]]}],"loading":null,"isPartial":false}
+4:{}
+5:"$0:rsc:props:children:0:props:serverProvidedParams:params"
+8:null
