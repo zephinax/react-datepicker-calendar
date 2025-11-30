@@ -6,7 +6,6 @@ description: Practical patterns for single, range, and multi-date picking with c
 ## Setup
 
 ```tsx
-import '@zephinax/react-datepicker-calendar/lib/DatePicker.css';
 import DatePicker, { Calendar, utils } from '@zephinax/react-datepicker-calendar';
 ```
 
@@ -44,7 +43,7 @@ const [selectedRange, setSelectedRange] = useState({
 <Calendar
   value={selectedRange}
   onChange={setSelectedRange}
-  minimumDate={utils().getToday()}
+  minimumDate={utils('en').getToday()}
   shouldHighlightWeekends
 />;
 ```
@@ -94,18 +93,51 @@ const [selectedDays, setSelectedDays] = useState([
 <Calendar
   value={selectedRange}
   onChange={setSelectedRange}
-  minimumDate={utils().getToday()}
+  minimumDate={utils('en').getToday()}
   maximumDate={{ year: 2025, month: 12, day: 31 }}
   disabledDays={[{ year: 2025, month: 5, day: 25 }]}
   onDisabledDayError={day => console.warn('Blocked:', day)}
 />;
 ```
 
-## Reusable helpers
+## Prop demos
 
-Use `utils(locale?)` to keep constraints aligned with the calendar:
+- Custom day classes (e.g., holidays):
+
+```tsx
+<Calendar
+  value={selectedDay}
+  onChange={setSelectedDay}
+  customDaysClassName={[
+    { year: 2025, month: 5, day: 20, className: 'bg-amber-200' },
+  ]}
+/>
+```
+
+- Popper position (DatePicker only):
+
+```tsx
+<DatePicker
+  value={selectedDay}
+  onChange={setSelectedDay}
+  calendarPopperPosition="top"
+/>
+```
+
+- Range error callback:
+
+```tsx
+<Calendar
+  value={selectedRange}
+  onChange={setSelectedRange}
+  disabledDays={[{ year: 2025, month: 5, day: 12 }]}
+  onDisabledDayError={day => toast.error(`Disabled: ${day.month}/${day.day}`)}
+/>
+```
+
+## Reusable helpers
 
 ```ts
 const today = utils('fa').getToday(); // honors calendar system and numbering
-const monthStart = utils().getMonthFirstWeekday({ year: 2025, month: 6, day: 1 });
+const monthStart = utils('en').getMonthFirstWeekday({ year: 2025, month: 6, day: 1 });
 ```

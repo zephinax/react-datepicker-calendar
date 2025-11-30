@@ -30,7 +30,6 @@ yarn add @zephinax/react-datepicker-calendar
 ```
 
 ```tsx
-import '@zephinax/react-datepicker-calendar/lib/DatePicker.css';
 import DatePicker, { Calendar, utils } from '@zephinax/react-datepicker-calendar';
 ```
 
@@ -69,7 +68,7 @@ The value type you pass determines the selection mode (single, range, or multi).
 <Calendar
   value={selectedRange}
   onChange={setSelectedRange}
-  minimumDate={utils().getToday()}
+  minimumDate={utils('en').getToday()}
   shouldHighlightWeekends
 />;
 
@@ -158,7 +157,7 @@ Built-in locales: English (`en`, left-to-right, Sunday-first, weekends Sunday/Sa
 
 ## Utility helpers
 
-`utils(locale?)` exposes date helpers that respect the locale:
+`utils(locale)` exposes date helpers that respect the locale:
 
 - `getToday()` returns today's date in the current calendar.
 - `getMonthName(month)` / `getMonthNumber(name)`.
@@ -167,7 +166,7 @@ Built-in locales: English (`en`, left-to-right, Sunday-first, weekends Sunday/Sa
 - `isBeforeDate(day1, day2)` and `checkDayInDayRange({ day, from, to })`.
 - `getLanguageDigits(value)` to format digits per locale.
 
-Use these helpers for guards (e.g., `minimumDate={utils().getToday()}`) so your constraints match the calendar's rules.
+Use these helpers for guards (e.g., `minimumDate={utils('en').getToday()}`) so your constraints match the calendar's rules.
 
 ## Accessibility and keyboard behavior
 

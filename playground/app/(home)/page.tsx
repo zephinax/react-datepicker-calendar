@@ -1,10 +1,14 @@
-import Link from 'next/link';
+'use client';
 
-const codeExample = `import '@zephinax/react-datepicker-calendar/lib/DatePicker.css';
-import DatePicker, { Calendar, utils } from '@zephinax/react-datepicker-calendar';
+import Link from 'next/link';
+import { useState } from 'react';
+import DatePicker, { utils } from '@zephinax/react-datepicker-calendar';
+import type { DayValue } from '@zephinax/react-datepicker-calendar';
+
+const codeExample = `import DatePicker, { Calendar, utils } from '@zephinax/react-datepicker-calendar';
 
 export function Example() {
-  const [value, setValue] = useState(utils().getToday());
+  const [value, setValue] = useState(utils('en').getToday());
   return (
     <DatePicker
       value={value}
@@ -44,6 +48,8 @@ const features = [
 ];
 
 export default function HomePage() {
+  const [demoValue, setDemoValue] = useState<DayValue>(utils('en').getToday());
+
   return (
     <main className="flex-1 overflow-x-hidden bg-gradient-to-b from-slate-50 via-white to-slate-100/80 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900">
       <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 pb-14 pt-12 sm:px-6 sm:pb-16 sm:pt-16 lg:gap-12">
@@ -118,6 +124,51 @@ export default function HomePage() {
                   <code>{codeExample}</code>
                 </pre>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white/80 p-5 shadow-sm ring-1 ring-slate-200/60 backdrop-blur dark:border-slate-800 dark:bg-slate-900/80 dark:ring-slate-800/60 sm:p-7">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-1">
+              <p className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">
+                Try it live
+              </p>
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+                Single-date picker demo
+              </h2>
+              <p className="text-sm text-slate-600 dark:text-slate-300">
+                Change the date to see the built-in formatting and popper behavior.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600 dark:text-slate-300">
+              <span className="rounded-full border border-slate-200 px-3 py-1 dark:border-slate-700">
+                Closes after single selection
+              </span>
+              <span className="rounded-full border border-slate-200 px-3 py-1 dark:border-slate-700">
+                Keyboard friendly
+              </span>
+            </div>
+          </div>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <DatePicker
+              value={demoValue}
+              onChange={setDemoValue}
+              inputPlaceholder="Choose a date"
+              shouldHighlightWeekends
+            />
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 shadow-sm dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100">
+              <p className="font-semibold text-slate-900 dark:text-white">Current value</p>
+              <p className="mt-1">
+                {demoValue
+                  ? `${demoValue.year}/${String(demoValue.month).padStart(2, '0')}/${String(
+                      demoValue.day,
+                    ).padStart(2, '0')}`
+                  : 'None'}
+              </p>
+              <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                Locale-aware formatting and weekend highlighting enabled.
+              </p>
             </div>
           </div>
         </section>
