@@ -1,6 +1,6 @@
 # Contribution Guide
 
-1- Submit [an issue](https://github.com/Zephinax/ReactDatepickerCalendar/issues/new/choose) for what you want to work on
+1- Submit [an issue](https://github.com/Zephinax/react-datepicker-calendar/issues/new/choose) for what you want to work on
 
 2- After approval, fork this repository
 

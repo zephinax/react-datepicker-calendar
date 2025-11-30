@@ -4,14 +4,14 @@
   "description": "A modern, customizable React date picker with smooth animations, responsive design, and easy integration.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "homepage": "https://zephinax.github.io/ReactDatepickerCalendar",
+  "homepage": "https://react-datepicker-calendar.zephinax.com",
   "bugs": {
-    "url": "https://github.com/Zephinax/ReactDatepickerCalendar/issues",
+    "url": "https://github.com/zephinax/react-datepicker-calendar/issues",
     "email": "zephinax@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Zephinax/ReactDatepickerCalendar.git",
+    "url": "https://github.com/zephinax/react-datepicker-calendar.git",
     "directory": "/"
   },
   "exports": {
@@ -22,7 +22,7 @@
   },
   "funding": {
     "type": "individual",
-    "url": "https://github.com/sponsors/Zephinax"
+    "url": "https://github.com/sponsors/zephinax"
   },
   "scripts": {
     "lint": "concurrently \"eslint src\" \"prettier --check \"./src/**/*.css\"\" ",
@@ -42,7 +42,7 @@
   "author": {
     "name": "Zephinax",
     "email": "zephinax@gmail.com",
-    "url": "https://github.com/Zephinax"
+    "url": "https://github.com/zephinax"
   },
   "license": "MIT",
   "keywords": [
