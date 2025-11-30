@@ -53,7 +53,7 @@ export default function HomePage() {
             <div className="absolute right-[-10%] top-1/3 h-56 w-56 rounded-full bg-slate-100 blur-3xl dark:bg-slate-700" />
             <div className="absolute left-1/2 bottom-0 h-64 w-64 -translate-x-1/2 rounded-full bg-slate-50 blur-3xl dark:bg-slate-800" />
           </div>
-          <div className="relative grid items-start gap-8 lg:grid-cols-[1.05fr,0.95fr] lg:items-center">
+          <div className="relative flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
             <div className="relative z-10 space-y-5 max-w-2xl">
               <span className="inline-flex items-center gap-2 rounded-full bg-slate-200/80 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-700 dark:bg-slate-800/80 dark:text-slate-100 sm:px-4 sm:py-2 sm:text-xs">
                 @zephinax/react-datepicker-calendar
@@ -81,20 +81,20 @@ export default function HomePage() {
                   View on npm
                 </a>
               </div>
-              <dl className="grid gap-3 text-sm text-slate-700 dark:text-slate-200 sm:grid-cols-2 md:grid-cols-3">
-                <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <dl className="flex flex-wrap gap-3 text-sm text-slate-700 dark:text-slate-200">
+                <div className="flex-1 min-w-[180px] rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
                   <dt className="text-slate-500 dark:text-slate-400">Selection modes</dt>
                   <dd className="text-base font-semibold text-slate-900 dark:text-white">
                     Single · Range · Multi
                   </dd>
                 </div>
-                <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                <div className="flex-1 min-w-[180px] rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
                   <dt className="text-slate-500 dark:text-slate-400">Locales</dt>
                   <dd className="text-base font-semibold text-slate-900 dark:text-white">
                     English · Persian · Custom
                   </dd>
                 </div>
-                <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                <div className="flex-1 min-w-[180px] rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
                   <dt className="text-slate-500 dark:text-slate-400">Accessibility</dt>
                   <dd className="text-base font-semibold text-slate-900 dark:text-white">
                     Keyboard & ARIA ready
@@ -103,7 +103,7 @@ export default function HomePage() {
               </dl>
             </div>
 
-            <div className="relative z-10">
+            <div className="relative z-10 flex-1 w-full">
               <div className="absolute -inset-2 rounded-3xl bg-gradient-to-br from-slate-200 via-white to-slate-100 blur-2xl dark:from-slate-800 dark:via-slate-900 dark:to-slate-800" />
               <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl shadow-slate-900/10 dark:border-slate-800 dark:bg-slate-900">
                 <div className="flex items-center gap-2 border-b border-slate-200 px-4 py-3 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-300">
@@ -131,11 +131,11 @@ export default function HomePage() {
               Built for production UI, focused on usability.
             </h2>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="flex flex-wrap gap-4">
             {features.map(feature => (
               <article
                 key={feature.title}
-                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900"
+                className="w-full flex-1 min-w-[240px] rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900"
               >
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
                   {feature.title}
