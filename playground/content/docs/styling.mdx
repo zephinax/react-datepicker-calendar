@@ -1,0 +1,80 @@
+---
+title: Styling & customization
+description: Tailor the DatePicker popper, calendar grid, and input appearance.
+---
+
+## Colors and animation
+
+- `colorPrimary` / `colorPrimaryLight` map to CSS vars `--cl-color-primary` and `--cl-color-primary-light`.
+- `slideAnimationDuration` drives header and grid transitions (default `0.4s`).
+
+```tsx
+<Calendar
+  value={selectedDay}
+  onChange={setSelectedDay}
+  colorPrimary="#0f766e"
+  colorPrimaryLight="#99f6e4"
+  slideAnimationDuration="250ms"
+/>;
+```
+
+## Input customization (DatePicker only)
+
+- `inputPlaceholder`, `inputClassName`, and `inputName` mirror native attributes.
+- `formatInputText` returns a custom display string; when truthy, it overrides the built-in formatter.
+- `renderInput={({ ref }) => ...}` fully replaces the input; pass the provided `ref` to keep focus/blur handling intact.
+
+```tsx
+<DatePicker
+  value={selectedDay}
+  onChange={setSelectedDay}
+  formatInputText={() => (selectedDay ? '📅 ' + selectedDay.day : '')}
+  renderInput={({ ref }) => (
+    <button ref={ref} className="my-trigger">
+      {selectedDay ? `Chosen: ${selectedDay.day}` : 'Open picker'}
+    </button>
+  )}
+/>;
+```
+
+## Layout hooks
+
+- `calendarPopperPosition`: `'auto'` (flips if near the viewport edge) or `'top'`.
+- `wrapperClassName`: class on the outer DatePicker wrapper (includes input and popper).
+- `calendarClassName`: extra class on the calendar root for both `DatePicker` and `Calendar`.
+- Popper arrow and glassmorphic styling are defined in `src/DatePicker.css`; override via your CSS.
+
+## Day-level classes
+
+- `calendarTodayClassName`: applied to today when not selected.
+- `calendarSelectedDayClassName`: single/multi selected days.
+- Range classes: `calendarRangeStartClassName`, `calendarRangeEndClassName`, `calendarRangeBetweenClassName`.
+- `customDaysClassName`: add per-day classes for holidays or events.
+- `shouldHighlightWeekends`: toggles weekend styling based on locale `weekDays`.
+
+```tsx
+<Calendar
+  value={selectedRange}
+  onChange={setSelectedRange}
+  calendarSelectedDayClassName="bg-green-500 text-white"
+  calendarRangeBetweenClassName="bg-green-100"
+  customDaysClassName={[
+    { year: 2025, month: 5, day: 20, className: 'bg-amber-200' },
+  ]}
+  shouldHighlightWeekends
+/>;
+```
+
+## Footer content
+
+Both `Calendar` and `DatePicker` accept `renderFooter` to render inline controls.
+
+```tsx
+<DatePicker
+  value={selectedDay}
+  onChange={setSelectedDay}
+  renderFooter={() => (
+    <button onClick={() => setSelectedDay(utils().getToday())}>Today</button>
+  )}
+/>;
+```

@@ -1,0 +1,59 @@
+---
+title: Locales & utilities
+description: Built-in locales, custom locale shape, and helper functions exposed by utils().
+---
+
+## Built-in locales
+
+- `en`: Gregorian calendar, LTR, Sunday-first, weekends Sunday/Saturday, Western digits.
+- `fa`: Jalali calendar, RTL, Monday-first, weekend Friday, Persian digits and strings.
+
+Pass `locale="fa"` to switch, or provide a custom locale object.
+
+## Custom locale shape
+
+Supply an object matching the internal contract:
+
+```ts
+const myLocale = {
+  months: string[],
+  weekDays: { name: string; short: string; isWeekend?: boolean }[],
+  weekStartingIndex: number,
+  getToday: ({ year, month, day }) => Day,
+  toNativeDate: (day: Day) => Date,
+  getMonthLength: (day: Day) => number,
+  transformDigit: (digit: string | number) => string,
+  nextMonth: string,
+  previousMonth: string,
+  openMonthSelector: string,
+  closeMonthSelector: string,
+  openYearSelector: string,
+  closeYearSelector: string,
+  from: string,
+  to: string,
+  defaultPlaceholder: string,
+  digitSeparator: string,
+  yearLetterSkip: number,
+  isRtl: boolean,
+};
+```
+
+Key points:
+
+- `toNativeDate` should convert your calendar day to a native `Date` for comparisons.
+- `weekDays` drives weekend highlighting and weekday headers; include `isWeekend` flags where needed.
+- `yearLetterSkip` trims digits for locales that omit leading century characters when rendering.
+
+## Utility helpers
+
+The package exports `utils(locale?)`. All functions honor the locale you pass (defaults to `'en'`):
+
+- `getToday()`: today's date in the target calendar.
+- `getMonthName(month)` / `getMonthNumber(name)`.
+- `getMonthLength({ year, month })`.
+- `getMonthFirstWeekday(date)`: aligns the grid with locale-specific week start.
+- `isBeforeDate(day1, day2)`: strict comparison using `toNativeDate`.
+- `checkDayInDayRange({ day, from, to })`: detects whether a day falls inside a range.
+- `getLanguageDigits(value)`: formats numbers using locale digits.
+
+Use these helpers for guardrails (e.g., `minimumDate={utils(locale).getToday()}`) so your constraints respect the same calendar logic as the UI.

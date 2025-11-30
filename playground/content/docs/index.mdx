@@ -1,13 +1,181 @@
 ---
-title: Hello World
-description: Your first document
+title: React Datepicker Calendar
+description: Full documentation for the DatePicker and Calendar components that live in src/.
 ---
 
-Welcome to the docs! You can start writing documents in `/content/docs`.
+This project exposes a lightweight date picker with two entry points:
 
-## What is Next?
+- `DatePicker`: bundled input plus calendar popper.
+- `Calendar`: bare calendar grid for embedding in layouts.
+
+Both components share the same selection logic and props. A "day" value is an object shaped as `{ year: number, month: number, day: number }`. Range selection expects `{ from: Day | null, to: Day | null }`, and multi-date selection uses `Day[]`.
+
+## Explore the docs
 
 <Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
+  <Card title="Usage examples" href="./usage" />
+  <Card title="Styling & customization" href="./styling" />
+  <Card title="Locales & utilities" href="./locale-and-utils" />
 </Cards>
+
+## Installation and setup
+
+Install the package in your app and import the styles once:
+
+```bash
+npm i @zephinax/react-datepicker-calendar
+# or
+yarn add @zephinax/react-datepicker-calendar
+```
+
+```tsx
+import '@zephinax/react-datepicker-calendar/lib/DatePicker.css';
+import DatePicker, { Calendar, utils } from '@zephinax/react-datepicker-calendar';
+```
+
+The components require React 16.8+ (hooks) and inherit your project's font-family.
+
+## Working with values
+
+```tsx
+// Single date
+const [selectedDay, setSelectedDay] = useState<Day | null>(null);
+
+// Range
+const [selectedRange, setSelectedRange] = useState<{ from: Day | null; to: Day | null }>({
+  from: null,
+  to: null,
+});
+
+// Multi-date
+const [selectedDays, setSelectedDays] = useState<Day[]>([]);
+```
+
+The value type you pass determines the selection mode (single, range, or multi). The picker enforces that shape and throws for malformed values.
+
+## Quick start examples
+
+```tsx
+// Input + popper
+<DatePicker
+  value={selectedDay}
+  onChange={setSelectedDay}
+  inputPlaceholder="Select a day"
+  shouldHighlightWeekends
+/>;
+
+// Inline calendar for ranges
+<Calendar
+  value={selectedRange}
+  onChange={setSelectedRange}
+  minimumDate={utils().getToday()}
+  shouldHighlightWeekends
+/>;
+
+// Multi-date selection with disabled days
+<Calendar
+  value={selectedDays}
+  onChange={setSelectedDays}
+  disabledDays={[
+    { year: 2025, month: 5, day: 12 },
+    { year: 2025, month: 5, day: 25 },
+  ]}
+  onDisabledDayError={day => console.warn('Disabled:', day)}
+/>;
+```
+
+`DatePicker` automatically closes after a single selection or after completing a range.
+
+## Shared calendar props (DatePicker & Calendar)
+
+| Prop | Type | Description | Default |
+| --- | --- | --- | --- |
+| `value` | `Day` \| `Day[]` \| `{ from: Day \| null; to: Day \| null }` | Current selection; shape controls mode. | `null` |
+| `onChange` | `(value) => void` | Fired with the updated value. | required |
+| `disabledDays` | `Day[]` | Exact days that cannot be picked. | `[]` |
+| `onDisabledDayError` | `(day) => void` | Called when the user attempts to select a disabled day or a range covering one. | noop |
+| `minimumDate` / `maximumDate` | `Day` | Clamp selectable days and year/month selectors. | `null` |
+| `shouldHighlightWeekends` | `boolean` | Adds the weekend style to weekend cells based on locale. | `false` |
+| `colorPrimary` / `colorPrimaryLight` | `string` | Override accent colors via CSS variables. | `#d24670` / `#edadc0` |
+| `slideAnimationDuration` | `string` | Duration (e.g. `0.4s`) used for header and grid transitions. | `0.4s` |
+| `selectorStartingYear` / `selectorEndingYear` | `number` | Optional year range. Defaults to `today.year - 100` through `today.year + 50`. | `0` (auto) |
+| `locale` | `'en'` \| `'fa'` \| Custom locale object | Controls months, weekdays, numbering, labels, layout direction, and weekend days. | `'en'` |
+| `calendarClassName` | `string` | Extra class on the root calendar container. | `''` |
+| `calendarTodayClassName` | `string` | Class applied to "today" when not selected. | `undefined` |
+| `calendarSelectedDayClassName` | `string` | Class for selected single/multi dates. | `undefined` |
+| `calendarRangeStartClassName` / `calendarRangeEndClassName` / `calendarRangeBetweenClassName` | `string` | Classes for range edges and in-between days. | `undefined` |
+| `customDaysClassName` | `{ year: number; month: number; day: number; className: string }[]` | Add per-day class names (e.g., holidays). | `[]` |
+| `renderFooter` | `() => ReactNode` | Render content inside the calendar footer. | `() => null` |
+
+### DatePicker-only props
+
+| Prop | Type | Description | Default |
+| --- | --- | --- | --- |
+| `inputPlaceholder` | `string` | Placeholder text; falls back to locale default. | `''` |
+| `inputClassName` | `string` | Extra class for the input element. | `''` |
+| `inputName` | `string` | Name attribute on the input. | `''` |
+| `formatInputText` | `() => string` | Provide custom rendered input text. If returns a truthy string it overrides the built-in formatter. | `() => {}` |
+| `renderInput` | `({ ref }) => ReactNode` | Fully replace the input; forward `ref` to preserve focus/blur behavior. | `() => null` |
+| `wrapperClassName` | `string` | Extra class on the outer DatePicker wrapper. | `''` |
+| `calendarClassName` | `string` | Extra class applied to the calendar inside the popper. | `''` |
+| `calendarPopperPosition` | `'auto'` \| `'top'` | Force the popper to open above the input or let it flip automatically. | `'auto'` |
+| `renderFooter` | `() => ReactNode` | Footer inside the popper's calendar (same as Calendar). | `() => null` |
+
+### Styling hooks
+
+- CSS variables: `--cl-color-primary`, `--cl-color-primary-light`, `--animation-duration`.
+- Class hooks: `calendarTodayClassName`, `calendarSelectedDayClassName`, range classes, and `customDaysClassName` let you target specific cells without overriding the whole stylesheet.
+- Wrapper classes: `wrapperClassName` (input wrapper) and `calendarClassName` (calendar root) help integrate with your design system.
+
+## Locale support and customization
+
+Built-in locales: English (`en`, left-to-right, Sunday-first, weekends Sunday/Saturday) and Persian (`fa`, right-to-left, Monday-first, Jalali calendar, Persian digits). Pass a locale object to add another language. The object should mirror the built-in shape:
+
+```ts
+{
+  months: string[];
+  weekDays: { name: string; short: string; isWeekend?: boolean }[];
+  weekStartingIndex: number;
+  getToday: ({ year, month, day }) => Day;
+  toNativeDate: (day: Day) => Date;
+  getMonthLength: (day: Day) => number;
+  transformDigit: (digit: string | number) => string;
+  nextMonth: string;
+  previousMonth: string;
+  openMonthSelector: string;
+  closeMonthSelector: string;
+  openYearSelector: string;
+  closeYearSelector: string;
+  from: string;
+  to: string;
+  defaultPlaceholder: string;
+  digitSeparator: string;
+  yearLetterSkip: number;
+  isRtl: boolean;
+}
+```
+
+## Utility helpers
+
+`utils(locale?)` exposes date helpers that respect the locale:
+
+- `getToday()` returns today's date in the current calendar.
+- `getMonthName(month)` / `getMonthNumber(name)`.
+- `getMonthLength({ year, month })`.
+- `getMonthFirstWeekday(date)` with locale-specific week start.
+- `isBeforeDate(day1, day2)` and `checkDayInDayRange({ day, from, to })`.
+- `getLanguageDigits(value)` to format digits per locale.
+
+Use these helpers for guards (e.g., `minimumDate={utils().getToday()}`) so your constraints match the calendar's rules.
+
+## Accessibility and keyboard behavior
+
+- Arrow keys move focus across days; Tab cycles through interactive elements. Enter activates a focused day.
+- Month/year selectors expose focusable buttons and respect min/max limits.
+- The popper closes when focus leaves the DatePicker or when a single/range selection completes.
+
+## Error handling
+
+When a user attempts to pick a disabled day or a range that crosses one, `onDisabledDayError` receives that day so you can show a message or toast without mutating state.
+
+You're ready to embed the picker, style it, and extend locales as needed—all using the components in `src/`.
