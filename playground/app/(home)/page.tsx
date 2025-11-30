@@ -59,7 +59,7 @@ export default function HomePage() {
             <div className="absolute right-[-10%] top-1/3 h-56 w-56 rounded-full bg-slate-100 blur-3xl dark:bg-slate-700" />
             <div className="absolute left-1/2 bottom-0 h-64 w-64 -translate-x-1/2 rounded-full bg-slate-50 blur-3xl dark:bg-slate-800" />
           </div>
-          <div className="relative flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
+          <div className="relative flex flex-col gap-8 lg:items-start lg:justify-between">
             <div className="relative z-10 space-y-5 max-w-2xl">
               <span className="inline-flex items-center gap-2 rounded-full bg-slate-200/80 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-700 dark:bg-slate-800/80 dark:text-slate-100 sm:px-4 sm:py-2 sm:text-xs">
                 @zephinax/react-datepicker-calendar

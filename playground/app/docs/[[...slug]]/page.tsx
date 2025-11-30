@@ -9,25 +9,26 @@ import { notFound } from 'next/navigation';
 import { getMDXComponents } from '@/mdx-components';
 import type { Metadata } from 'next';
 import { createRelativeLink } from 'fumadocs-ui/mdx';
+import type { ComponentType } from 'react';
+import type { MDXComponents } from 'mdx/types';
 
 export default async function Page(props: PageProps<'/docs/[[...slug]]'>) {
   const params = await props.params;
   const page = source.getPage(params.slug);
   if (!page) notFound();
 
-  const MDX = page.data.body;
+  const MDX = page.data.body as ComponentType<{ components?: MDXComponents }>;
+  const RelativeLink = createRelativeLink(source, page);
+  const mdxComponents = getMDXComponents({
+    a: (props: any) => <RelativeLink {...props} />,
+  });
 
   return (
     <DocsPage toc={page.data.toc} full={page.data.full}>
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
       <DocsBody>
-        <MDX
-          components={getMDXComponents({
-            // this allows you to link to other pages with relative file paths
-            a: createRelativeLink(source, page),
-          })}
-        />
+        <MDX components={mdxComponents} />
       </DocsBody>
     </DocsPage>
   );
