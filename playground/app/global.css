@@ -1,3 +1,4 @@
 @import 'tailwindcss';
 @import 'fumadocs-ui/css/dusk.css';
 @import 'fumadocs-ui/css/preset.css';
+@import '@zephinax/react-datepicker-calendar/style.css';
