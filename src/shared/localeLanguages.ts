@@ -8,22 +8,23 @@ import {
   PERSIAN_NUMBERS,
 } from './constants';
 import { toExtendedDay } from './generalUtils';
+import { Day, Locale, CalendarDigit } from './types';
 
-const localeLanguages = {
+const localeLanguages: Record<string, Locale> = {
   en: {
     months: GREGORIAN_MONTHS,
     weekDays: GREGORIAN_WEEK_DAYS,
     weekStartingIndex: 0,
-    getToday(gregorainTodayObject) {
-      return gregorainTodayObject;
+    getToday(gregorianTodayObject: Day): Day {
+      return gregorianTodayObject;
     },
-    toNativeDate(date) {
+    toNativeDate(date: Day): Date {
       return new Date(date.year, date.month - 1, date.day);
     },
-    getMonthLength(date) {
+    getMonthLength(date: Day): number {
       return new Date(date.year, date.month, 0).getDate();
     },
-    transformDigit(digit) {
+    transformDigit(digit: CalendarDigit): CalendarDigit {
       return digit;
     },
     nextMonth: 'Next Month',
@@ -43,22 +44,22 @@ const localeLanguages = {
     months: PERSIAN_MONTHS,
     weekDays: PERSIAN_WEEK_DAYS,
     weekStartingIndex: 1,
-    getToday({ year, month, day }) {
+    getToday({ year, month, day }: Day): Day {
       const { jy, jm, jd } = jalaali.toJalaali(year, month, day);
       return { year: jy, month: jm, day: jd };
     },
-    toNativeDate(date) {
+    toNativeDate(date: Day): Date {
       const gregorian = jalaali.toGregorian(...toExtendedDay(date));
       return new Date(gregorian.gy, gregorian.gm - 1, gregorian.gd);
     },
-    getMonthLength(date) {
+    getMonthLength(date: Day): number {
       return jalaali.jalaaliMonthLength(date.year, date.month);
     },
-    transformDigit(digit) {
+    transformDigit(digit: CalendarDigit): CalendarDigit {
       return digit
         .toString()
         .split('')
-        .map(letter => PERSIAN_NUMBERS[Number(letter)])
+        .map(letter => PERSIAN_NUMBERS[Number(letter)] || letter)
         .join('');
     },
     nextMonth: 'ماه بعد',
@@ -66,7 +67,7 @@ const localeLanguages = {
     openMonthSelector: 'نمایش انتخابگر ماه',
     openYearSelector: 'نمایش انتخابگر سال',
     closeMonthSelector: 'بستن انتخابگر ماه',
-    closeYearSelector: 'بستن انتخابگر ماه',
+    closeYearSelector: 'بستن انتخابگر سال',
     from: 'از',
     to: 'تا',
     defaultPlaceholder: 'انتخاب...',
@@ -76,8 +77,8 @@ const localeLanguages = {
   },
 };
 
-const getLocaleDetails = locale => {
-  if (typeof locale === 'string') return localeLanguages[locale];
+const getLocaleDetails = (locale: string | Locale = 'en'): Locale => {
+  if (typeof locale === 'string') return localeLanguages[locale] || localeLanguages.en;
   return locale;
 };
 

@@ -1,14 +1,18 @@
-import '@testing-library/jest-dom/extend-expect';
+import '@testing-library/jest-dom/vitest';
+import { expect, vi } from 'vitest';
+
+// Provide Jest compatibility alias
+(globalThis as any).jest = vi;
 
 expect.extend({
-  toBePressed(received) {
+  toBePressed(received: HTMLElement) {
     const isPassing = received.getAttribute('aria-pressed') === 'true';
     return {
       message: () => `expected ${isPassing ? 'not' : ''} ${received} to be pressed`,
       pass: isPassing,
     };
   },
-  toBeSelected(element) {
+  toBeSelected(element: HTMLElement) {
     const isSelected = element.getAttribute('aria-selected') === 'true';
     return {
       pass: isSelected,
@@ -23,7 +27,7 @@ expect.extend({
       },
     };
   },
-  toHaveTabIndex(received, expected) {
+  toHaveTabIndex(received: HTMLElement, expected: number | string) {
     const isPassing = received.getAttribute('tabindex') === String(expected);
     return {
       message: () =>

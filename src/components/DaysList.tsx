@@ -10,8 +10,30 @@ import {
 import { TYPE_SINGLE_DATE, TYPE_RANGE, TYPE_MUTLI_DATE } from '../shared/constants';
 import handleKeyboardNavigation from '../shared/keyboardNavigation';
 import { useLocaleUtils, useLocaleLanguage } from '../shared/hooks';
+import { Day, CustomDayClassNameItem, Locale } from '../shared/types';
 
-const DaysList = ({
+interface DaysListProps {
+  activeDate: Day;
+  value?: any;
+  monthChangeDirection: string;
+  onSlideChange: () => void;
+  disabledDays?: Day[];
+  onDisabledDayError?: (day: Day) => void;
+  minimumDate?: Day | null;
+  maximumDate?: Day | null;
+  onChange?: (value: any) => void;
+  locale?: string | Locale;
+  calendarTodayClassName?: string;
+  calendarSelectedDayClassName?: string;
+  calendarRangeStartClassName?: string;
+  calendarRangeEndClassName?: string;
+  calendarRangeBetweenClassName?: string;
+  shouldHighlightWeekends?: boolean;
+  isQuickSelectorOpen?: boolean;
+  customDaysClassName?: CustomDayClassNameItem[];
+}
+
+const DaysList: React.FC<DaysListProps> = ({
   activeDate,
   value,
   monthChangeDirection,
@@ -28,10 +50,10 @@ const DaysList = ({
   calendarRangeEndClassName = '',
   calendarRangeBetweenClassName = '',
   shouldHighlightWeekends = false,
-  isQuickSelectorOpen,
-  customDaysClassName,
+  isQuickSelectorOpen = false,
+  customDaysClassName = [],
 }) => {
-  const calendarSectionWrapper = useRef(null);
+  const calendarSectionWrapper = useRef<HTMLDivElement>(null);
   const { isRtl, weekDays: weekDaysList } = useLocaleLanguage(locale);
   const {
     getToday,
@@ -45,15 +67,15 @@ const DaysList = ({
   const today = getToday();
 
   useEffect(() => {
-    if (!monthChangeDirection) return;
+    if (!monthChangeDirection || !calendarSectionWrapper.current) return;
     animateContent({
       direction: monthChangeDirection,
       parent: calendarSectionWrapper.current,
     });
   }, [monthChangeDirection]);
 
-  const getDayRangeValue = day => {
-    const clonedDayRange = deepCloneObject(value);
+  const getDayRangeValue = (day: Day) => {
+    const clonedDayRange = deepCloneObject(value) || { from: null, to: null };
     const dayRangeValue =
       clonedDayRange.from && clonedDayRange.to ? { from: null, to: null } : clonedDayRange;
     const dayRangeProp = !dayRangeValue.from ? 'from' : 'to';
@@ -61,12 +83,12 @@ const DaysList = ({
     const { from, to } = dayRangeValue;
 
     // swap from and to values if from is later than to
-    if (isBeforeDate(dayRangeValue.to, dayRangeValue.from)) {
+    if (from && to && isBeforeDate(dayRangeValue.to, dayRangeValue.from)) {
       dayRangeValue.from = to;
       dayRangeValue.to = from;
     }
 
-    const checkIncludingDisabledDay = disabledDay => {
+    const checkIncludingDisabledDay = (disabledDay: Day) => {
       return checkDayInDayRange({
         day: disabledDay,
         from: dayRangeValue.from,
@@ -82,14 +104,14 @@ const DaysList = ({
     return dayRangeValue;
   };
 
-  const getMultiDateValue = day => {
-    const isAlreadyExisting = value.some(valueDay => isSameDay(valueDay, day));
-    const addedToValue = [...value, day];
-    const removedFromValue = value.filter(valueDay => !isSameDay(valueDay, day));
+  const getMultiDateValue = (day: Day) => {
+    const isAlreadyExisting = (value || []).some((valueDay: Day) => isSameDay(valueDay, day));
+    const addedToValue = [...(value || []), day];
+    const removedFromValue = (value || []).filter((valueDay: Day) => !isSameDay(valueDay, day));
     return isAlreadyExisting ? removedFromValue : addedToValue;
   };
 
-  const handleDayClick = day => {
+  const handleDayClick = (day: Day) => {
     const getNewValue = () => {
       const valueType = getValueType(value);
       switch (valueType) {
@@ -99,19 +121,22 @@ const DaysList = ({
           return getDayRangeValue(day);
         case TYPE_MUTLI_DATE:
           return getMultiDateValue(day);
+        default:
+          return day;
       }
     };
     const newValue = getNewValue();
     onChange(newValue);
   };
 
-  const isSingleDateSelected = day => {
+  const isSingleDateSelected = (day: Day) => {
     const valueType = getValueType(value);
     if (valueType === TYPE_SINGLE_DATE) return isSameDay(day, value);
-    if (valueType === TYPE_MUTLI_DATE) return value.some(valueDay => isSameDay(valueDay, day));
+    if (valueType === TYPE_MUTLI_DATE) return (value || []).some((valueDay: Day) => isSameDay(valueDay, day));
+    return false;
   };
 
-  const getDayStatus = dayItem => {
+  const getDayStatus = (dayItem: Day) => {
     const isToday = isSameDay(dayItem, today);
     const isSelected = isSingleDateSelected(dayItem);
     const { from: startingDay, to: endingDay } = value || {};
@@ -121,7 +146,7 @@ const DaysList = ({
     return { isToday, isSelected, isStartingDayRange, isEndingDayRange, isWithinRange };
   };
 
-  const getDayClassNames = dayItem => {
+  const getDayClassNames = (dayItem: any) => {
     const {
       isToday,
       isSelected,
@@ -143,9 +168,14 @@ const DaysList = ({
     return classNames;
   };
 
-  const getViewMonthDays = date => {
+  const getViewMonthDays = (date: Day) => {
     // to match month starting date with the correct weekday label
-    const prependingBlankDays = createUniqueRange(getMonthFirstWeekday(date), 'starting-blank');
+    const prependingBlankDays = createUniqueRange(getMonthFirstWeekday(date), 'starting-blank').map(item => ({
+      ...item,
+      isStandard: false,
+      month: date.month,
+      year: date.year,
+    }));
     const standardDays = createUniqueRange(getMonthLength(date)).map(day => ({
       ...day,
       isStandard: true,
@@ -156,7 +186,7 @@ const DaysList = ({
     return allDays;
   };
 
-  const handleDayPress = ({ isDisabled, ...dayItem }) => {
+  const handleDayPress = ({ isDisabled, ...dayItem }: any) => {
     if (isDisabled) {
       onDisabledDayError(dayItem); // good for showing error messages
     } else handleDayClick(dayItem);
@@ -169,12 +199,13 @@ const DaysList = ({
     isStartingDayRange,
     isToday,
     day,
-  }) => {
+  }: any) => {
     if (isQuickSelectorOpen || !isOnActiveSlide || !isStandard) return false;
     if (isSelected || isStartingDayRange || isToday || day === 1) return true;
+    return false;
   };
 
-  const renderEachWeekDays = ({ id, value: day, month, year, isStandard }, index) => {
+  const renderEachWeekDays = ({ id, value: day, month, year, isStandard }: any, index: number) => {
     const dayItem = { day, month, year };
     const isInDisabledDaysRange = disabledDays.some(disabledDay => isSameDay(dayItem, disabledDay));
     const isBeforeMinimumDate = isBeforeDate(dayItem, minimumDate);
@@ -197,7 +228,7 @@ const DaysList = ({
     });
     return (
       <div
-        tabIndex={shouldEnableKeyboardNavigation ? '0' : '-1'}
+        tabIndex={shouldEnableKeyboardNavigation ? 0 : -1}
         key={id}
         className={`Calendar__day -${isRtl ? 'rtl' : 'ltr'} ${additionalClass}`}
         onClick={() => {
@@ -219,7 +250,7 @@ const DaysList = ({
     );
   };
 
-  const renderMonthDays = isInitialActiveChild => {
+  const renderMonthDays = (isInitialActiveChild: boolean) => {
     const date = getSlideDate({
       activeDate,
       isInitialActiveChild,
@@ -227,7 +258,7 @@ const DaysList = ({
       parent: calendarSectionWrapper.current,
     });
     const allDays = getViewMonthDays(date);
-    const renderSingleWeekRow = weekRowIndex => {
+    const renderSingleWeekRow = (weekRowIndex: number) => {
       const eachWeekDays = allDays
         .slice(weekRowIndex * 7, weekRowIndex * 7 + 7)
         .map(renderEachWeekDays);
@@ -240,7 +271,7 @@ const DaysList = ({
     return Array.from(Array(6).keys()).map(renderSingleWeekRow);
   };
 
-  const handleKeyDown = e => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     handleKeyboardNavigation(e, { allowVerticalArrows: true });
   };
 

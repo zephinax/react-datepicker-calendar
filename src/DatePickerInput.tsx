@@ -3,15 +3,26 @@ import React from 'react';
 import { useLocaleUtils, useLocaleLanguage } from './shared/hooks';
 import { putZero, getValueType } from './shared/generalUtils';
 import { TYPE_SINGLE_DATE, TYPE_RANGE, TYPE_MUTLI_DATE } from './shared/constants';
+import { RenderInputProps, Locale } from './shared/types';
 
-const DatePickerInput = React.forwardRef(
+interface DatePickerInputProps {
+  value?: any;
+  inputPlaceholder?: string;
+  inputClassName?: string;
+  inputName?: string;
+  formatInputText?: () => string;
+  renderInput?: (props: RenderInputProps) => React.ReactNode;
+  locale?: string | Locale;
+}
+
+const DatePickerInput = React.forwardRef<HTMLInputElement, DatePickerInputProps>(
   (
     {
       value,
       inputPlaceholder = '',
       inputClassName = '',
       inputName = '',
-      formatInputText = () => {},
+      formatInputText = () => '',
       renderInput = () => null,
       locale,
     },
@@ -52,11 +63,12 @@ const DatePickerInput = React.forwardRef(
     };
 
     const getMultiDateValue = () => {
-      return value.map(date => getLanguageDigits(date.day)).join(`${digitSeparator} `);
+      return (value || []).map((date: any) => getLanguageDigits(date.day)).join(`${digitSeparator} `);
     };
 
     const getValue = () => {
-      if (formatInputText()) return formatInputText();
+      const formatted = formatInputText();
+      if (formatted) return formatted;
       const valueType = getValueType(value);
       switch (valueType) {
         case TYPE_SINGLE_DATE:
@@ -65,29 +77,32 @@ const DatePickerInput = React.forwardRef(
           return getDayRangeValue();
         case TYPE_MUTLI_DATE:
           return getMultiDateValue();
+        default:
+          return '';
       }
     };
 
     const placeholderValue = inputPlaceholder || defaultPlaceholder;
-    const render = () => {
-      return (
-        renderInput({ ref }) || (
-          <input
-            data-testid="datepicker-input"
-            readOnly
-            ref={ref}
-            value={getValue()}
-            name={inputName}
-            placeholder={placeholderValue}
-            className={`DatePicker__input -${isRtl ? 'rtl' : 'ltr'} ${inputClassName}`}
-            aria-label={placeholderValue}
-          />
-        )
-      );
-    };
+    const customRender = renderInput({ ref });
+    if (customRender) {
+      return <>{customRender}</>;
+    }
 
-    return render();
+    return (
+      <input
+        data-testid="datepicker-input"
+        readOnly
+        ref={ref}
+        value={getValue()}
+        name={inputName}
+        placeholder={placeholderValue}
+        className={`DatePicker__input -${isRtl ? 'rtl' : 'ltr'} ${inputClassName}`}
+        aria-label={placeholderValue}
+      />
+    );
   },
 );
+
+DatePickerInput.displayName = 'DatePickerInput';
 
 export default DatePickerInput;

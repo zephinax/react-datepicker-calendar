@@ -3,8 +3,20 @@ import React, { useRef, useEffect } from 'react';
 import { MINIMUM_SELECTABLE_YEAR_SUBTRACT, MAXIMUM_SELECTABLE_YEAR_SUM } from '../shared/constants';
 import handleKeyboardNavigation from '../shared/keyboardNavigation';
 import { useLocaleUtils } from '../shared/hooks';
+import { Day, Locale } from '../shared/types';
 
-const YearSelector = ({
+interface YearSelectorProps {
+  isOpen: boolean;
+  activeDate: Day;
+  onYearSelect: (year: number) => void;
+  selectorStartingYear?: number;
+  selectorEndingYear?: number;
+  maximumDate?: Day | null;
+  minimumDate?: Day | null;
+  locale?: string | Locale;
+}
+
+const YearSelector: React.FC<YearSelectorProps> = ({
   isOpen,
   activeDate,
   onYearSelect,
@@ -14,20 +26,22 @@ const YearSelector = ({
   minimumDate,
   locale,
 }) => {
-  const wrapperElement = useRef(null);
-  const yearListElement = useRef(null);
+  const wrapperElement = useRef<HTMLDivElement>(null);
+  const yearListElement = useRef<HTMLUListElement>(null);
 
   const { getLanguageDigits, getToday } = useLocaleUtils(locale);
   const startingYearValue =
     selectorStartingYear || getToday().year - MINIMUM_SELECTABLE_YEAR_SUBTRACT;
   const endingYearValue = selectorEndingYear || getToday().year + MAXIMUM_SELECTABLE_YEAR_SUM;
-  const allYears = [];
+  const allYears: number[] = [];
   for (let i = startingYearValue; i <= endingYearValue; i += 1) {
     allYears.push(i);
   }
+
   useEffect(() => {
+    if (!wrapperElement.current || !yearListElement.current) return;
     const classToggleMethod = isOpen ? 'add' : 'remove';
-    const activeSelectorYear = wrapperElement.current.querySelector(
+    const activeSelectorYear = wrapperElement.current.querySelector<HTMLElement>(
       '.Calendar__yearSelectorItem.-active',
     );
     if (!activeSelectorYear) {
@@ -49,13 +63,13 @@ const YearSelector = ({
       return (
         <li key={item} className={`Calendar__yearSelectorItem ${isSelected ? '-active' : ''}`}>
           <button
-            tabIndex={isSelected && isOpen ? '0' : '-1'}
+            tabIndex={isSelected && isOpen ? 0 : -1}
             className="Calendar__yearSelectorText"
             type="button"
             onClick={() => {
               onYearSelect(item);
             }}
-            disabled={isAfterMaximumDate || isBeforeMinimumDate}
+            disabled={Boolean(isAfterMaximumDate || isBeforeMinimumDate)}
             aria-pressed={isSelected}
             data-is-default-selectable={isSelected}
           >
@@ -66,7 +80,7 @@ const YearSelector = ({
     });
   };
 
-  const handleKeyDown = e => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     handleKeyboardNavigation(e, { allowVerticalArrows: false });
   };
 

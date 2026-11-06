@@ -71,25 +71,28 @@ describe('DatePicker Visibility', () => {
       left: 50,
       width: 100,
     }));
-    input.focus();
+    fireEvent.focus(input);
 
     // overflow from right
     Object.defineProperty(document.documentElement, 'clientWidth', { value: 100 });
-    input.blur();
+    fireEvent.blur(input);
 
     // overflow from left
     HTMLDivElement.prototype.getBoundingClientRect = jest.fn(() => ({
       left: -50,
       width: 100,
     }));
-    input.focus();
-    queryByTestId('calendar-container').getBoundingClientRect = jest.fn(() => ({
-      left: -50,
-      width: 100,
-    }));
+    fireEvent.focus(input);
+    const container = queryByTestId('calendar-container');
+    if (container) {
+      container.getBoundingClientRect = jest.fn(() => ({
+        left: -50,
+        width: 100,
+      })) as any;
+    }
     rerender(<DatePicker />);
-    input.focus();
-    input.blur();
+    fireEvent.focus(input);
+    fireEvent.blur(input);
 
     // overflow from bottom
     Object.defineProperty(document.documentElement, 'clientHeight', { value: 100 });
@@ -143,7 +146,7 @@ describe('DatePicker Visibility', () => {
     });
     const input = getByTestId('datepicker-input');
     const rangeStart = getAllByText('1')[0];
-    input.focus();
+    fireEvent.focus(input);
 
     fireEvent.click(rangeStart);
     rerender(
@@ -153,7 +156,7 @@ describe('DatePicker Visibility', () => {
       />,
     );
 
-    input.focus();
+    fireEvent.focus(input);
 
     const rangeEnd = getAllByText('5')[0];
     // calendar still open
@@ -174,7 +177,7 @@ describe('DatePicker Visibility', () => {
     const day1 = getAllByText('1')[0];
     const day2 = getAllByText('5')[0];
     const day3 = getAllByText('10')[0];
-    input.focus();
+    fireEvent.focus(input);
 
     fireEvent.click(day1);
     fireEvent.click(day2);

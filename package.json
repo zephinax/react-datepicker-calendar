@@ -26,6 +26,9 @@
     "url": "https://github.com/zephinax/react-datepicker-calendar.git",
     "directory": "/"
   },
+  "workspaces": [
+    "playground"
+  ],
   "funding": {
     "type": "individual",
     "url": "https://github.com/sponsors/zephinax"

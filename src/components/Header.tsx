@@ -3,8 +3,22 @@ import React, { useEffect, useRef } from 'react';
 import { isSameDay } from '../shared/generalUtils';
 import { getSlideDate, animateContent, handleSlideAnimationEnd } from '../shared/sliderHelpers';
 import { useLocaleUtils, useLocaleLanguage } from '../shared/hooks';
+import { Day, Locale } from '../shared/types';
 
-const Header = ({
+interface HeaderProps {
+  maximumDate?: Day | null;
+  minimumDate?: Day | null;
+  onMonthChange: (direction: string) => void;
+  activeDate: Day;
+  monthChangeDirection: string;
+  onMonthSelect: () => void;
+  onYearSelect: () => void;
+  isMonthSelectorOpen: boolean;
+  isYearSelectorOpen: boolean;
+  locale?: string | Locale;
+}
+
+const Header: React.FC<HeaderProps> = ({
   maximumDate,
   minimumDate,
   onMonthChange,
@@ -16,8 +30,8 @@ const Header = ({
   isYearSelectorOpen,
   locale,
 }) => {
-  const headerElement = useRef(null);
-  const monthYearWrapperElement = useRef(null);
+  const headerElement = useRef<HTMLDivElement>(null);
+  const monthYearWrapperElement = useRef<HTMLDivElement>(null);
 
   const { getMonthName, isBeforeDate, getLanguageDigits } = useLocaleUtils(locale);
   const {
@@ -31,7 +45,7 @@ const Header = ({
   } = useLocaleLanguage(locale);
 
   useEffect(() => {
-    if (!monthChangeDirection) return;
+    if (!monthChangeDirection || !monthYearWrapperElement.current) return;
     animateContent({
       direction: monthChangeDirection,
       parent: monthYearWrapperElement.current,
@@ -39,17 +53,21 @@ const Header = ({
   }, [monthChangeDirection]);
 
   useEffect(() => {
+    if (!headerElement.current) return;
     const isOpen = isMonthSelectorOpen || isYearSelectorOpen;
-    const monthText = headerElement.current.querySelector(
+    const monthText = headerElement.current.querySelector<HTMLElement>(
       '.Calendar__monthYear.-shown .Calendar__monthText',
     );
-    const yearText = monthText.nextSibling;
-    const hasActiveBackground = element => element.classList.contains('-activeBackground');
+    if (!monthText) return;
+    const yearText = monthText.nextSibling as HTMLElement | null;
+    if (!yearText) return;
+
+    const hasActiveBackground = (element: HTMLElement) => element.classList.contains('-activeBackground');
     const isInitialRender =
       !isOpen && !hasActiveBackground(monthText) && !hasActiveBackground(yearText);
     if (isInitialRender) return;
 
-    const arrows = [...headerElement.current.querySelectorAll('.Calendar__monthArrowWrapper')];
+    const arrows = Array.from(headerElement.current.querySelectorAll<HTMLElement>('.Calendar__monthArrowWrapper'));
     const hasMonthSelectorToggled = isMonthSelectorOpen || hasActiveBackground(monthText);
     const primaryElement = hasMonthSelectorToggled ? monthText : yearText;
     const secondaryElement = hasMonthSelectorToggled ? yearText : monthText;
@@ -61,7 +79,7 @@ const Header = ({
     if (!isOpen) {
       secondaryElement.removeAttribute('aria-hidden');
     } else {
-      secondaryElement.setAttribute('aria-hidden', true);
+      secondaryElement.setAttribute('aria-hidden', 'true');
     }
     secondaryElement.setAttribute('tabindex', isOpen ? '-1' : '0');
     secondaryElement.style.transform = '';
@@ -77,13 +95,13 @@ const Header = ({
         arrow.removeAttribute('aria-hidden');
         arrow.setAttribute('tabindex', '0');
       } else {
-        arrow.setAttribute('aria-hidden', true);
+        arrow.setAttribute('aria-hidden', 'true');
         arrow.setAttribute('tabindex', '-1');
       }
     });
-  }, [isMonthSelectorOpen, isYearSelectorOpen]);
+  }, [isMonthSelectorOpen, isYearSelectorOpen, isRtl]);
 
-  const getMonthYearText = isInitialActiveChild => {
+  const getMonthYearText = (isInitialActiveChild: boolean) => {
     const date = getSlideDate({
       isInitialActiveChild,
       monthChangeDirection,
@@ -96,14 +114,16 @@ const Header = ({
   };
 
   const isNextMonthArrowDisabled =
-    maximumDate &&
-    isBeforeDate(maximumDate, { ...activeDate, month: activeDate.month + 1, day: 1 });
-  const isPreviousMonthArrowDisabled =
-    minimumDate &&
-    (isBeforeDate({ ...activeDate, day: 1 }, minimumDate) ||
-      isSameDay(minimumDate, { ...activeDate, day: 1 }));
+    Boolean(maximumDate &&
+    isBeforeDate(maximumDate, { ...activeDate, month: activeDate.month + 1, day: 1 }));
 
-  const onMonthChangeTrigger = direction => {
+  const isPreviousMonthArrowDisabled =
+    Boolean(minimumDate &&
+    (isBeforeDate({ ...activeDate, day: 1 }, minimumDate) ||
+      isSameDay(minimumDate, { ...activeDate, day: 1 })));
+
+  const onMonthChangeTrigger = (direction: string) => {
+    if (!monthYearWrapperElement.current) return;
     const isMonthChanging = Array.from(monthYearWrapperElement.current.children).some(child =>
       child.classList.contains('-shownAnimated'),
     );
@@ -111,7 +131,7 @@ const Header = ({
     onMonthChange(direction);
   };
 
-  // first button text is the one who shows the current month and year(initial active child)
+  // first button text is the one who shows the current month and year (initial active child)
   const monthYearButtons = [true, false].map(isInitialActiveChild => {
     const { month, year } = getMonthYearText(isInitialActiveChild);
     const isActiveMonth = month === getMonthName(activeDate.month);
@@ -131,7 +151,7 @@ const Header = ({
           type="button"
           className="Calendar__monthText"
           aria-label={isMonthSelectorOpen ? closeMonthSelector : openMonthSelector}
-          tabIndex={isActiveMonth ? '0' : '-1'}
+          tabIndex={isActiveMonth ? 0 : -1}
           {...hiddenStatus}
         >
           {month}
@@ -141,7 +161,7 @@ const Header = ({
           type="button"
           className="Calendar__yearText"
           aria-label={isYearSelectorOpen ? closeYearSelector : openYearSelector}
-          tabIndex={isActiveMonth ? '0' : '-1'}
+          tabIndex={isActiveMonth ? 0 : -1}
           {...hiddenStatus}
         >
           {year}

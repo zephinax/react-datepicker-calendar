@@ -1,20 +1,23 @@
 /*
-  These utility functions highly depend on locale of the date picker(Persian or Gregorian)
+  These utility functions highly depend on locale of the date picker (Persian or Gregorian)
 */
 
 import getLocaleDetails from './localeLanguages';
+import { Day, DayValue, Locale, Utils } from './types';
 
-const utils = (locale = 'en') => {
+const utils = (locale: string | Locale = 'en'): Utils => {
+  const localeDetails: Locale = typeof locale === 'string' ? getLocaleDetails(locale) : locale;
   const {
     months: monthsList,
+    weekDays: weekDaysList,
     getToday: localeGetToday,
     toNativeDate,
-    getMonthLength,
+    getMonthLength: localeGetMonthLength,
     weekStartingIndex,
     transformDigit: getLanguageDigits,
-  } = typeof locale === 'string' ? getLocaleDetails(locale) : locale;
+  } = localeDetails;
 
-  const getToday = () => {
+  const getToday = (): Day => {
     const todayDate = new Date();
     const year = todayDate.getFullYear();
     const month = todayDate.getMonth() + 1;
@@ -22,23 +25,33 @@ const utils = (locale = 'en') => {
     return localeGetToday({ year, month, day });
   };
 
-  const getMonthName = month => monthsList[month - 1];
+  const getMonthName = (month: number): string => monthsList[month - 1];
 
-  const getMonthNumber = monthName => monthsList.indexOf(monthName) + 1;
+  const getMonthNumber = (monthName: string): number => monthsList.indexOf(monthName) + 1;
 
-  const getMonthFirstWeekday = date => {
+  const getMonthLength = (day: Day): number => localeGetMonthLength(day);
+
+  const getMonthFirstWeekday = (date: Day): number => {
     const gregorianDate = toNativeDate({ ...date, day: 1 });
     const weekday = gregorianDate.getDay();
     const dayIndex = weekday + weekStartingIndex;
     return dayIndex % 7;
   };
 
-  const isBeforeDate = (day1, day2) => {
+  const isBeforeDate = (day1?: Day | null, day2?: Day | null): boolean => {
     if (!day1 || !day2) return false;
     return toNativeDate(day1) < toNativeDate(day2);
   };
 
-  const checkDayInDayRange = ({ day, from, to }) => {
+  const checkDayInDayRange = ({
+    day,
+    from,
+    to,
+  }: {
+    day: Day;
+    from: DayValue;
+    to: DayValue;
+  }): boolean => {
     if (!day || !from || !to) return false;
     const nativeDay = toNativeDate(day);
     const nativeFrom = toNativeDate(from);
@@ -47,6 +60,8 @@ const utils = (locale = 'en') => {
   };
 
   return {
+    monthsList,
+    weekDaysList,
     getToday,
     getMonthName,
     getMonthNumber,
@@ -54,7 +69,7 @@ const utils = (locale = 'en') => {
     getMonthFirstWeekday,
     isBeforeDate,
     checkDayInDayRange,
-    getLanguageDigits,
+    getLanguageDigits: (digit: string | number) => String(getLanguageDigits(digit)),
   };
 };
 
