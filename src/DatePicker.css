@@ -5,6 +5,7 @@
 }
 
 .DatePicker__input {
+  cursor: pointer;
   background: var(--cl-input-bg, #fff);
   border: 1px solid var(--cl-input-border, #ddd);
   color: var(--cl-input-text, #1e293b);

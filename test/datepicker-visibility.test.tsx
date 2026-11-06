@@ -12,6 +12,16 @@ const renderOpenDatePicker = (renderProps = {}) => {
 };
 
 describe('DatePicker Visibility', () => {
+  test('opens calendar on input click', () => {
+    const { getByTestId, queryByTestId } = render(<DatePicker />);
+    const input = getByTestId('datepicker-input');
+
+    expect(queryByTestId('calendar-container')).not.toBeInTheDocument();
+
+    fireEvent.click(input);
+    expect(queryByTestId('calendar-container')).toBeInTheDocument();
+  });
+
   test('toggles correctly on input focus/blur', () => {
     const { queryByTestId, getByTestId, getByText } = render(
       <div>

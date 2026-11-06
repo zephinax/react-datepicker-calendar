@@ -88,8 +88,24 @@ const DatePickerComponent = React.forwardRef<HTMLDivElement, DatePickerProps<Val
       }
     };
 
+    const lastOpenedTime = useRef(0);
+
     const openCalendar = () => {
-      if (!shouldPreventToggle.current) setCalendarVisibility(true);
+      if (!shouldPreventToggle.current) {
+        lastOpenedTime.current = Date.now();
+        setCalendarVisibility(true);
+      }
+    };
+
+    const handleInputClick = () => {
+      if (shouldPreventToggle.current) {
+        shouldPreventToggle.current = false;
+        return;
+      }
+      if (Date.now() - lastOpenedTime.current < 250) {
+        return;
+      }
+      setCalendarVisibility(prev => !prev);
     };
 
     // Keep the calendar in the screen bounds if input is near the window edges
@@ -169,6 +185,7 @@ const DatePickerComponent = React.forwardRef<HTMLDivElement, DatePickerProps<Val
           renderInput={renderInput}
           inputName={inputName}
           locale={locale}
+          onClick={handleInputClick}
         />
         {isCalendarOpen && (
           <>

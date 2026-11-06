@@ -13,6 +13,7 @@ interface DatePickerInputProps {
   formatInputText?: () => string;
   renderInput?: (props: RenderInputProps) => React.ReactNode;
   locale?: string | Locale;
+  onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
 }
 
 const DatePickerInput = React.forwardRef<HTMLInputElement, DatePickerInputProps>(
@@ -25,6 +26,7 @@ const DatePickerInput = React.forwardRef<HTMLInputElement, DatePickerInputProps>
       formatInputText = () => '',
       renderInput = () => null,
       locale,
+      onClick,
     },
     ref,
   ) => {
@@ -98,6 +100,7 @@ const DatePickerInput = React.forwardRef<HTMLInputElement, DatePickerInputProps>
         placeholder={placeholderValue}
         className={`DatePicker__input -${isRtl ? 'rtl' : 'ltr'} ${inputClassName}`}
         aria-label={placeholderValue}
+        onClick={onClick}
       />
     );
   },

@@ -96,6 +96,21 @@ export default function HomePage() {
     ]);
   };
 
+  const handleLocaleChange = (newLocale: LocaleOption) => {
+    setLocale(newLocale);
+    const newToday = utils(newLocale).getToday();
+    setSingleValue(newToday);
+    setRangeValue({
+      from: newToday,
+      to: { ...newToday, day: Math.min(newToday.day + 5, 28) },
+    });
+    setMultiValue([
+      newToday,
+      { ...newToday, day: Math.min(newToday.day + 3, 28) },
+      { ...newToday, day: Math.min(newToday.day + 7, 28) },
+    ]);
+  };
+
   const getActiveCode = () => {
     const isDatePicker = viewComponent === 'datepicker';
     const compName = isDatePicker ? 'DatePicker' : 'Calendar';
@@ -258,14 +273,15 @@ ${weekendProp}${restrictionProp}${colorProp}    />
         </section>
 
         {/* Fumadocs Component Preview */}
-        <section className="flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl ring-1 ring-slate-200/60 dark:border-slate-800 dark:bg-slate-900/90 dark:ring-slate-800/60">
+        <section className="flex flex-col rounded-3xl border border-slate-200 bg-white shadow-2xl ring-1 ring-slate-200/60 dark:border-slate-800 dark:bg-slate-900/90 dark:ring-slate-800/60">
           {/* Card Header with Preview / Code Tabs */}
-          <div className="flex flex-wrap items-center justify-between border-b border-slate-200/80 bg-slate-50/70 px-6 py-4 dark:border-slate-800 dark:bg-slate-950/70">
+          <div className="flex flex-wrap items-center justify-between rounded-t-3xl border-b border-slate-200/80 bg-slate-50/70 px-6 py-4 dark:border-slate-800 dark:bg-slate-950/70">
             <div className="flex items-center gap-3">
               <div className="inline-flex rounded-xl bg-slate-200/60 p-1 dark:bg-slate-800">
                 <button
+                  type="button"
                   onClick={() => setActiveTab('preview')}
-                  className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
+                  className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold cursor-pointer transition ${
                     activeTab === 'preview'
                       ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white'
                       : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'
@@ -275,8 +291,9 @@ ${weekendProp}${restrictionProp}${colorProp}    />
                   <span>Preview</span>
                 </button>
                 <button
+                  type="button"
                   onClick={() => setActiveTab('code')}
-                  className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
+                  className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold cursor-pointer transition ${
                     activeTab === 'code'
                       ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white'
                       : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'
@@ -294,9 +311,10 @@ ${weekendProp}${restrictionProp}${colorProp}    />
 
             <div className="flex items-center gap-2">
               <button
+                type="button"
                 onClick={resetValues}
                 title="Reset selection values"
-                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition"
+                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 cursor-pointer transition"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Reset</span>
@@ -304,8 +322,9 @@ ${weekendProp}${restrictionProp}${colorProp}    />
 
               {activeTab === 'code' && (
                 <button
+                  type="button"
                   onClick={copyCode}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 transition"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 cursor-pointer transition"
                 >
                   {codeCopied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
                   <span>{codeCopied ? 'Copied' : 'Copy Code'}</span>
@@ -323,8 +342,9 @@ ${weekendProp}${restrictionProp}${colorProp}    />
               </span>
               <div className="inline-flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
                 <button
+                  type="button"
                   onClick={() => setViewComponent('datepicker')}
-                  className={`rounded-md px-2.5 py-1 text-xs font-semibold transition ${
+                  className={`rounded-md px-2.5 py-1 text-xs font-semibold cursor-pointer transition ${
                     viewComponent === 'datepicker'
                       ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white'
                       : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'
@@ -333,8 +353,9 @@ ${weekendProp}${restrictionProp}${colorProp}    />
                   DatePicker (Popup)
                 </button>
                 <button
+                  type="button"
                   onClick={() => setViewComponent('calendar')}
-                  className={`rounded-md px-2.5 py-1 text-xs font-semibold transition ${
+                  className={`rounded-md px-2.5 py-1 text-xs font-semibold cursor-pointer transition ${
                     viewComponent === 'calendar'
                       ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white'
                       : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'
@@ -353,9 +374,10 @@ ${weekendProp}${restrictionProp}${colorProp}    />
               <div className="inline-flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
                 {(['single', 'range', 'multi'] as Mode[]).map(m => (
                   <button
+                    type="button"
                     key={m}
                     onClick={() => setMode(m)}
-                    className={`rounded-md px-2.5 py-1 text-xs font-semibold capitalize transition ${
+                    className={`rounded-md px-2.5 py-1 text-xs font-semibold capitalize cursor-pointer transition ${
                       mode === m
                         ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white'
                         : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'
@@ -374,8 +396,9 @@ ${weekendProp}${restrictionProp}${colorProp}    />
               </span>
               <div className="inline-flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
                 <button
-                  onClick={() => setLocale('en')}
-                  className={`rounded-md px-2.5 py-1 text-xs font-semibold transition ${
+                  type="button"
+                  onClick={() => handleLocaleChange('en')}
+                  className={`rounded-md px-2.5 py-1 text-xs font-semibold cursor-pointer transition ${
                     locale === 'en'
                       ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white'
                       : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'
@@ -384,8 +407,9 @@ ${weekendProp}${restrictionProp}${colorProp}    />
                   🇺🇸 Gregorian (en)
                 </button>
                 <button
-                  onClick={() => setLocale('fa')}
-                  className={`rounded-md px-2.5 py-1 text-xs font-semibold transition ${
+                  type="button"
+                  onClick={() => handleLocaleChange('fa')}
+                  className={`rounded-md px-2.5 py-1 text-xs font-semibold cursor-pointer transition ${
                     locale === 'fa'
                       ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white'
                       : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'
@@ -404,10 +428,11 @@ ${weekendProp}${restrictionProp}${colorProp}    />
               <div className="flex items-center gap-1.5">
                 {ACCENT_COLORS.map(accent => (
                   <button
+                    type="button"
                     key={accent.name}
                     onClick={() => setSelectedAccent(accent)}
                     title={accent.name}
-                    className={`h-5 w-5 rounded-full transition-transform ${
+                    className={`h-5 w-5 rounded-full cursor-pointer transition-transform ${
                       selectedAccent.color === accent.color
                         ? 'scale-125 ring-2 ring-slate-900 ring-offset-2 dark:ring-white dark:ring-offset-slate-900'
                         : 'hover:scale-110 opacity-75 hover:opacity-100'
@@ -425,7 +450,7 @@ ${weekendProp}${restrictionProp}${colorProp}    />
                   type="checkbox"
                   checked={highlightWeekends}
                   onChange={e => setHighlightWeekends(e.target.checked)}
-                  className="rounded border-slate-300 text-rose-600 focus:ring-rose-500"
+                  className="rounded border-slate-300 text-rose-600 focus:ring-rose-500 cursor-pointer"
                 />
                 <span>Weekends</span>
               </label>
@@ -435,7 +460,7 @@ ${weekendProp}${restrictionProp}${colorProp}    />
                   type="checkbox"
                   checked={hasRestrictions}
                   onChange={e => setHasRestrictions(e.target.checked)}
-                  className="rounded border-slate-300 text-rose-600 focus:ring-rose-500"
+                  className="rounded border-slate-300 text-rose-600 focus:ring-rose-500 cursor-pointer"
                 />
                 <span>Min/Max</span>
               </label>
@@ -444,10 +469,10 @@ ${weekendProp}${restrictionProp}${colorProp}    />
 
           {/* Main Card Content (Preview or Code Tab) */}
           {activeTab === 'preview' ? (
-            <div className="flex flex-col items-center justify-center p-8 sm:p-12 min-h-[440px] bg-slate-50/50 dark:bg-slate-950/40 relative">
+            <div className="relative flex flex-col items-center rounded-b-3xl bg-slate-50/50 p-6 sm:p-10 min-h-[580px] dark:bg-slate-950/40">
               {/* Background dot pattern */}
               <div
-                className="absolute inset-0 opacity-[0.25] dark:opacity-[0.15] pointer-events-none"
+                className="absolute inset-0 opacity-[0.25] dark:opacity-[0.15] pointer-events-none rounded-b-3xl"
                 style={{
                   backgroundImage:
                     'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)',
@@ -455,63 +480,86 @@ ${weekendProp}${restrictionProp}${colorProp}    />
                 }}
               />
 
-              <div className="relative z-10 w-full flex flex-col items-center justify-center gap-6">
+              <div className="relative z-10 w-full flex flex-col items-center gap-6">
+                {/* State Value Status Banner (Top of preview so it never gets covered by popup calendar) */}
+                <div className="flex flex-wrap items-center justify-center gap-2 rounded-full border border-slate-200 bg-white/90 px-4 py-1.5 text-xs text-slate-700 shadow-xs backdrop-blur dark:border-slate-800 dark:bg-slate-900/90 dark:text-slate-300">
+                  <span className="font-semibold text-slate-900 dark:text-white">Selected Value:</span>
+                  <code className="font-mono text-rose-600 dark:text-rose-400 font-semibold">
+                    {mode === 'single' &&
+                      (singleValue
+                        ? `${singleValue.year}/${String(singleValue.month).padStart(2, '0')}/${String(
+                            singleValue.day,
+                          ).padStart(2, '0')}`
+                        : 'null')}
+                    {mode === 'range' &&
+                      (rangeValue.from && rangeValue.to
+                        ? `${rangeValue.from.year}/${rangeValue.from.month}/${rangeValue.from.day} → ${rangeValue.to.year}/${rangeValue.to.month}/${rangeValue.to.day}`
+                        : rangeValue.from
+                        ? `${rangeValue.from.year}/${rangeValue.from.month}/${rangeValue.from.day} → selecting...`
+                        : 'null')}
+                    {mode === 'multi' &&
+                      `${multiValue.length} day${multiValue.length === 1 ? '' : 's'} selected`}
+                  </code>
+                </div>
+
                 {viewComponent === 'datepicker' ? (
-                  <div className="w-full flex flex-col items-center gap-4">
-                    <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                  <div className="w-full flex flex-col items-center pt-2 pb-24">
+                    <span className="mb-4 text-xs font-medium text-slate-500 dark:text-slate-400">
                       Click the input below to trigger the themed popper:
                     </span>
-                    {mode === 'single' && (
-                      <DatePicker
-                        value={singleValue}
-                        onChange={setSingleValue}
-                        locale={locale}
-                        colorPrimary={selectedAccent.color}
-                        colorPrimaryLight={selectedAccent.light}
-                        shouldHighlightWeekends={highlightWeekends}
-                        minimumDate={
-                          hasRestrictions
-                            ? { year: today.year, month: today.month, day: 1 }
-                            : null
-                        }
-                        inputPlaceholder="Select date"
-                      />
-                    )}
-                    {mode === 'range' && (
-                      <DatePicker
-                        value={rangeValue}
-                        onChange={setRangeValue}
-                        locale={locale}
-                        colorPrimary={selectedAccent.color}
-                        colorPrimaryLight={selectedAccent.light}
-                        shouldHighlightWeekends={highlightWeekends}
-                        minimumDate={
-                          hasRestrictions
-                            ? { year: today.year, month: today.month, day: 1 }
-                            : null
-                        }
-                        inputPlaceholder="Select date range"
-                      />
-                    )}
-                    {mode === 'multi' && (
-                      <DatePicker
-                        value={multiValue}
-                        onChange={setMultiValue}
-                        locale={locale}
-                        colorPrimary={selectedAccent.color}
-                        colorPrimaryLight={selectedAccent.light}
-                        shouldHighlightWeekends={highlightWeekends}
-                        minimumDate={
-                          hasRestrictions
-                            ? { year: today.year, month: today.month, day: 1 }
-                            : null
-                        }
-                        inputPlaceholder="Select multiple dates"
-                      />
-                    )}
+                    <div className="relative z-30">
+                      {mode === 'single' && (
+                        <DatePicker
+                          value={singleValue}
+                          onChange={setSingleValue}
+                          locale={locale}
+                          colorPrimary={selectedAccent.color}
+                          colorPrimaryLight={selectedAccent.light}
+                          shouldHighlightWeekends={highlightWeekends}
+                          minimumDate={
+                            hasRestrictions
+                              ? { year: today.year, month: today.month, day: 1 }
+                              : null
+                          }
+                          inputPlaceholder="Select date"
+                        />
+                      )}
+                      {mode === 'range' && (
+                        <DatePicker
+                          value={rangeValue}
+                          onChange={setRangeValue}
+                          locale={locale}
+                          colorPrimary={selectedAccent.color}
+                          colorPrimaryLight={selectedAccent.light}
+                          shouldHighlightWeekends={highlightWeekends}
+                          minimumDate={
+                            hasRestrictions
+                              ? { year: today.year, month: today.month, day: 1 }
+                              : null
+                          }
+                          inputPlaceholder="Select date range"
+                        />
+                      )}
+                      {mode === 'multi' && (
+                        <DatePicker
+                          value={multiValue}
+                          onChange={setMultiValue}
+                          locale={locale}
+                          colorPrimary={selectedAccent.color}
+                          colorPrimaryLight={selectedAccent.light}
+                          shouldHighlightWeekends={highlightWeekends}
+                          minimumDate={
+                            hasRestrictions
+                              ? { year: today.year, month: today.month, day: 1 }
+                              : null
+                          }
+                          inputPlaceholder="Select multiple dates"
+                        />
+                      )}
+                    </div>
                   </div>
                 ) : (
-                  <div className="w-full flex flex-col items-center">
+                  <div className="w-full flex flex-col items-center pt-2 pb-6">
                     {mode === 'single' && (
                       <Calendar
                         value={singleValue}
@@ -559,31 +607,10 @@ ${weekendProp}${restrictionProp}${colorProp}    />
                     )}
                   </div>
                 )}
-
-                {/* State Value Footer Pill */}
-                <div className="flex flex-wrap items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white/90 px-4 py-2 text-xs text-slate-700 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-900/90 dark:text-slate-300">
-                  <span className="font-semibold text-slate-900 dark:text-white">Selected Value:</span>
-                  <code className="font-mono text-rose-600 dark:text-rose-400">
-                    {mode === 'single' &&
-                      (singleValue
-                        ? `${singleValue.year}/${String(singleValue.month).padStart(2, '0')}/${String(
-                            singleValue.day,
-                          ).padStart(2, '0')}`
-                        : 'null')}
-                    {mode === 'range' &&
-                      (rangeValue.from && rangeValue.to
-                        ? `${rangeValue.from.year}/${rangeValue.from.month}/${rangeValue.from.day} → ${rangeValue.to.year}/${rangeValue.to.month}/${rangeValue.to.day}`
-                        : rangeValue.from
-                        ? `${rangeValue.from.year}/${rangeValue.from.month}/${rangeValue.from.day} → selecting...`
-                        : 'null')}
-                    {mode === 'multi' &&
-                      `${multiValue.length} day${multiValue.length === 1 ? '' : 's'} selected`}
-                  </code>
-                </div>
               </div>
             </div>
           ) : (
-            <div className="p-6 bg-slate-950 font-mono text-xs leading-relaxed text-slate-100 overflow-x-auto min-h-[440px]">
+            <div className="p-6 bg-slate-950 font-mono text-xs leading-relaxed text-slate-100 overflow-x-auto min-h-[440px] rounded-b-3xl">
               <pre>
                 <code>{getActiveCode()}</code>
               </pre>
