@@ -1,0 +1,143 @@
+---
+title: Usage examples
+description: Practical patterns for single, range, and multi-date picking with constraints.
+---
+
+## Setup
+
+```tsx
+import DatePicker, { Calendar, utils } from '@zephinax/react-datepicker-calendar';
+```
+
+The `value` shape controls the selection mode:
+
+- Single: `Day | null`
+- Range: `{ from: Day | null; to: Day | null }`
+- Multi: `Day[]`
+
+`Day` is `{ year: number; month: number; day: number }`.
+
+## Single date with input
+
+```tsx
+const [selectedDay, setSelectedDay] = useState<Day | null>(null);
+
+<DatePicker
+  value={selectedDay}
+  onChange={setSelectedDay}
+  inputPlaceholder="Select a day"
+  shouldHighlightWeekends
+/>;
+```
+
+The popper closes after choosing a date.
+
+## Date range (inline calendar)
+
+```tsx
+const [selectedRange, setSelectedRange] = useState({
+  from: null,
+  to: null,
+});
+
+<Calendar
+  value={selectedRange}
+  onChange={setSelectedRange}
+  minimumDate={utils('en').getToday()}
+  shouldHighlightWeekends
+/>;
+```
+
+The range resets if the user re-starts selection after completing `from` and `to`.
+
+## Multiple dates
+
+```tsx
+const [selectedDays, setSelectedDays] = useState<Day[]>([]);
+
+<Calendar
+  value={selectedDays}
+  onChange={setSelectedDays}
+  shouldHighlightWeekends
+/>;
+```
+
+Clicking a selected day removes it.
+
+## Default values
+
+```tsx
+// Single
+const [selectedDay, setSelectedDay] = useState({ year: 2025, month: 5, day: 12 });
+
+// Range
+const [selectedRange, setSelectedRange] = useState({
+  from: { year: 2025, month: 5, day: 10 },
+  to: { year: 2025, month: 5, day: 15 },
+});
+
+// Multi
+const [selectedDays, setSelectedDays] = useState([
+  { year: 2025, month: 5, day: 3 },
+  { year: 2025, month: 5, day: 18 },
+]);
+```
+
+## Constraints and guards
+
+- `minimumDate` / `maximumDate` clamp navigation and disable out-of-range days.
+- `disabledDays` blocks specific days; ranges that cover a disabled day trigger `onDisabledDayError`.
+- `selectorStartingYear` / `selectorEndingYear` narrow the year selector; defaults are computed from today (current year - 100 to +50).
+
+```tsx
+<Calendar
+  value={selectedRange}
+  onChange={setSelectedRange}
+  minimumDate={utils('en').getToday()}
+  maximumDate={{ year: 2025, month: 12, day: 31 }}
+  disabledDays={[{ year: 2025, month: 5, day: 25 }]}
+  onDisabledDayError={day => console.warn('Blocked:', day)}
+/>;
+```
+
+## Prop demos
+
+- Custom day classes (e.g., holidays):
+
+```tsx
+<Calendar
+  value={selectedDay}
+  onChange={setSelectedDay}
+  customDaysClassName={[
+    { year: 2025, month: 5, day: 20, className: 'bg-amber-200' },
+  ]}
+/>
+```
+
+- Popper position (DatePicker only):
+
+```tsx
+<DatePicker
+  value={selectedDay}
+  onChange={setSelectedDay}
+  calendarPopperPosition="top"
+/>
+```
+
+- Range error callback:
+
+```tsx
+<Calendar
+  value={selectedRange}
+  onChange={setSelectedRange}
+  disabledDays={[{ year: 2025, month: 5, day: 12 }]}
+  onDisabledDayError={day => toast.error(`Disabled: ${day.month}/${day.day}`)}
+/>
+```
+
+## Reusable helpers
+
+```ts
+const today = utils('fa').getToday(); // honors calendar system and numbering
+const monthStart = utils('en').getMonthFirstWeekday({ year: 2025, month: 6, day: 1 });
+```

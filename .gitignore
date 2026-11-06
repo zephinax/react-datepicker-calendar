@@ -1,3 +1,8 @@
-node_modules/
+node_modules
+lib
+dist
+.next
+out
 coverage
 .DS_Store
+*.log

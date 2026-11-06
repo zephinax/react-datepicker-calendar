@@ -1,4 +1,4 @@
-# react-modern-calendar-datepicker
+# @zephinax/react-datepicker-calendar
 
 A lightweight and easy-to-use React date picker package with support for multiple languages (currently `en` and `fa` locales). This package is built with React hooks and inherits the font-family from your project for seamless integration.
 
@@ -9,18 +9,18 @@ A lightweight and easy-to-use React date picker package with support for multipl
 ## Installation
 Install via Yarn:
 ```bash
-yarn add react-modern-calendar-datepicker
+yarn add @zephinax/react-datepicker-calendar
 ```
 
 Or via NPM:
 ```bash
-npm i react-modern-calendar-datepicker
+npm i @zephinax/react-datepicker-calendar
 ```
 
 ## Basic Import
 ```javascript
-import 'react-modern-calendar-datepicker/lib/DatePicker.css';
-import DatePicker from 'react-modern-calendar-datepicker';
+import '@zephinax/react-datepicker-calendar/lib/DatePicker.css';
+import DatePicker from '@zephinax/react-datepicker-calendar';
 ```
 
 ## Core Concepts
@@ -34,8 +34,8 @@ Both components share most props. Use the `locale` prop to switch languages (e.g
 ### Single Date Picker
 ```javascript
 import React, { useState } from 'react';
-import 'react-modern-calendar-datepicker/lib/DatePicker.css';
-import DatePicker from 'react-modern-calendar-datepicker';
+import '@zephinax/react-datepicker-calendar/lib/DatePicker.css';
+import DatePicker from '@zephinax/react-datepicker-calendar';
 
 const App = () => {
   const [selectedDay, setSelectedDay] = useState(null);
@@ -55,8 +55,8 @@ export default App;
 ### Range Date Picker
 ```javascript
 import React, { useState } from 'react';
-import 'react-modern-calendar-datepicker/lib/DatePicker.css';
-import { Calendar } from 'react-modern-calendar-datepicker';
+import '@zephinax/react-datepicker-calendar/lib/DatePicker.css';
+import { Calendar } from '@zephinax/react-datepicker-calendar';
 
 const App = () => {
   const [selectedDayRange, setSelectedDayRange] = useState({
@@ -78,8 +78,8 @@ export default App;
 ### Multiple Date Picker
 ```javascript
 import React, { useState } from 'react';
-import 'react-modern-calendar-datepicker/lib/DatePicker.css';
-import { Calendar } from 'react-modern-calendar-datepicker';
+import '@zephinax/react-datepicker-calendar/lib/DatePicker.css';
+import { Calendar } from '@zephinax/react-datepicker-calendar';
 
 const App = () => {
   const [selectedDays, setSelectedDays] = useState([]);
@@ -124,7 +124,7 @@ const [selectedDays, setSelectedDays] = useState(preselectedDays);
 ## Minimum & Maximum Date
 Restrict date selection with `minimumDate` and `maximumDate`:
 ```javascript
-import { utils } from 'react-modern-calendar-datepicker';
+import { utils } from '@zephinax/react-datepicker-calendar';
 
 <Calendar
   value={selectedDay}
