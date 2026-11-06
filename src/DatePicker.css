@@ -5,13 +5,15 @@
 }
 
 .DatePicker__input {
-  background: #fff;
-  border: 1px solid #ddd;
+  background: var(--cl-input-bg, #fff);
+  border: 1px solid var(--cl-input-border, #ddd);
+  color: var(--cl-input-text, #1e293b);
   padding: 0.6em 1em;
   border-radius: 0.6em;
   font-family: inherit;
   text-align: center;
   font-size: 12px;
+  transition: border-color 0.2s, background-color 0.2s, color 0.2s;
 }
 
 .DatePicker__input.-rtl {
@@ -19,7 +21,13 @@
 }
 
 .DatePicker__input::placeholder {
-  color: #979797;
+  color: var(--cl-input-placeholder, #979797);
+}
+
+.DatePicker__input:focus {
+  outline: none;
+  border-color: var(--cl-color-primary, #d24670);
+  box-shadow: 0 0 0 2px var(--cl-color-primary-light, #edadc0);
 }
 
 .DatePicker__calendarContainer.-top + .DatePicker__calendarArrow {
@@ -65,20 +73,30 @@
   border-style: solid;
   z-index: 10;
   border-width: 0 10px 10px 10px;
-  border-color: transparent transparent #ffffff60 transparent; /* شفاف */
+  border-color: transparent transparent var(--cl-bg-calendar, #ffffff90) transparent;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
 
 .Calendar {
+  --cl-color-primary: #d24670;
+  --cl-color-primary-light: #edadc0;
   --cl-color-black: #444444;
   --cl-color-disabled: #bbbbbb;
   --cl-color-error: #ff2929;
+  --cl-bg-calendar: rgba(255, 255, 255, 0.9);
+  --cl-bg-selector: #ffffff;
+  --cl-bg-hover: rgba(0, 0, 0, 0.05);
+  --cl-border: rgba(0, 0, 0, 0.08);
+  --cl-text-day: rgba(0, 0, 0, 0.85);
+  --cl-shadow: 0 1em 4em rgba(0, 0, 0, 0.07);
+
   font-size: 10px;
-  background: #ffffff60;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 1em 4em rgba(0, 0, 0, 0.07);
+  background: var(--cl-bg-calendar);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--cl-shadow);
+  border: 1px solid var(--cl-border);
   border-radius: 1.4em;
   position: relative;
   user-select: none;
@@ -89,6 +107,8 @@
   z-index: 10;
   max-width: 90vw;
   min-height: 36.7em;
+  color: var(--cl-color-black);
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
 
 .DatePicker .Calendar,
@@ -235,6 +255,7 @@
   transform: translateX(0) scale(0.95);
   will-change: transform;
   border-radius: 5px;
+  color: var(--cl-color-black);
 }
 
 .Calendar__monthYear:not(.-shown) > *,
@@ -253,22 +274,8 @@
 .Calendar__monthYear.-shown > *:hover,
 .Calendar:not(.-noFocusOutline) .Calendar__monthYear.-shown > *:focus,
 .Calendar__monthYear > *.-activeBackground {
-  background: #ffffff70;
+  background: var(--cl-bg-hover, #ffffff70);
 }
-
-/*.Calendar__monthText:hover {
-  transform: translateX(-0.2em) scale(0.95);
-}
-.Calendar.-rtl .Calendar__monthText:hover {
-  transform: translateX(0.2em) scale(0.95);
-}
-
-.Calendar__yearText:hover {
-  transform: translateX(0.2em) scale(0.95);
-}
-.Calendar.-rtl .Calendar__yearText:hover {
-  transform: translateX(-0.2em) scale(0.95);
-}*/
 
 .Calendar__monthYear .Calendar__yearText.-hidden {
   transform: translateX(50%);
@@ -326,11 +333,13 @@
   position: relative;
   z-index: 2;
   border-radius: 1em;
-  background: #fff;
+  background: var(--cl-bg-selector, #fff);
+  color: var(--cl-color-black, #444444);
   transform: translateY(-150%);
   will-change: transform;
   transition: 0.6s;
   height: calc(100% - 12px);
+  border: 1px solid var(--cl-border, transparent);
 }
 
 .Calendar__yearSelectorWrapper {
@@ -351,13 +360,13 @@
 }
 
 .Calendar__yearSelectorWrapper::after {
-  background-image: linear-gradient(to bottom, #fff, #fff 10%, rgba(245, 245, 245, 0));
+  background-image: linear-gradient(to bottom, var(--cl-bg-selector, #fff), var(--cl-bg-selector, #fff) 10%, transparent);
   top: 0;
   border-radius: 1em 1em 0 0;
 }
 
 .Calendar__yearSelectorWrapper::before {
-  background-image: linear-gradient(to top, #fff, #fff 10%, rgba(245, 245, 245, 0));
+  background-image: linear-gradient(to top, var(--cl-bg-selector, #fff), var(--cl-bg-selector, #fff) 10%, transparent);
   bottom: 6px;
   border-radius: 0 0 1em 1em;
 }
@@ -399,6 +408,7 @@
   min-width: 85%;
   padding: 0.2em 0.5em;
   border-radius: 8.5px;
+  color: var(--cl-color-black);
 }
 
 .Calendar__monthSelector.-open,
@@ -429,11 +439,12 @@
   font-size: 1.3em;
   min-width: 70%;
   transition: 0.3s;
+  color: var(--cl-color-black);
 }
 
 .Calendar__monthSelectorItem:not(.-active) .Calendar__monthSelectorItemText:not(:disabled):hover,
 .Calendar__yearSelectorItem:not(.-active) .Calendar__yearSelectorText:not(:disabled):hover {
-  background: #f5f5f5;
+  background: var(--cl-bg-hover, #f5f5f5);
 }
 
 .Calendar__monthSelectorItemText:disabled,
@@ -529,7 +540,7 @@
   transition: 0.2s;
   border: 1px solid transparent;
   margin-bottom: 0.3em;
-  color: rgba(0, 0, 0, 0.8);
+  color: var(--cl-text-day, rgba(0, 0, 0, 0.85));
   display: flex;
   justify-content: center;
   align-items: center;
@@ -552,7 +563,7 @@
 }
 
 .Calendar__day:not(.-blank):not(.-selectedStart):not(.-selectedEnd):not(.-selectedBetween):not(.-selected):hover {
-  background: #ffffff70;
+  background: var(--cl-bg-hover, #ffffff70);
   border-radius: 50%;
   color: var(--cl-color-black);
   border-color: transparent;
@@ -612,7 +623,6 @@
 .Calendar__day.-today:not(.-selectedStart):not(.-selectedEnd):not(.-selectedBetween) {
   font-weight: 600;
   color: var(--cl-color-black);
-  color: #000;
   position: relative;
 }
 
@@ -623,9 +633,9 @@
   display: block;
   width: 0.6em;
   height: 1px;
-  background: #000;
+  background: var(--cl-color-black);
   left: 50%;
-  opacity: 0.5;
+  opacity: 0.6;
   transform: translateX(-50%);
   transition: 0.2s;
 }
@@ -681,11 +691,62 @@
   }
 }
 
-/*@media (prefers-color-scheme: dark) {
-  .DatePicker__calendarArrow {
-    border-color: transparent transparent #00000080 transparent !important;
-  }
-  .Calendar {
-    background: #00000080;
-  }
-}*/
+/* Dark Mode Theme Support (Fumadocs, Tailwind .dark, or system preferences) */
+.dark .Calendar,
+[data-theme='dark'] .Calendar {
+  --cl-color-black: #f8fafc;
+  --cl-color-disabled: #64748b;
+  --cl-color-error: #f87171;
+  --cl-bg-calendar: rgba(15, 23, 42, 0.92);
+  --cl-bg-selector: #0f172a;
+  --cl-bg-hover: rgba(255, 255, 255, 0.08);
+  --cl-border: rgba(255, 255, 255, 0.1);
+  --cl-text-day: #f1f5f9;
+  --cl-shadow: 0 1.2em 4.5em rgba(0, 0, 0, 0.6);
+  --cl-color-primary-light: rgba(225, 29, 72, 0.25);
+}
+
+.dark .DatePicker__input,
+[data-theme='dark'] .DatePicker__input {
+  --cl-input-bg: #0f172a;
+  --cl-input-border: #334155;
+  --cl-input-text: #f8fafc;
+  --cl-input-placeholder: #64748b;
+}
+
+.dark .DatePicker__calendarArrow,
+[data-theme='dark'] .DatePicker__calendarArrow {
+  border-color: transparent transparent rgba(15, 23, 42, 0.92) transparent;
+}
+
+.dark .Calendar__monthArrow,
+[data-theme='dark'] .Calendar__monthArrow {
+  filter: invert(1);
+}
+
+.dark .Calendar__yearSelectorWrapper::after,
+[data-theme='dark'] .Calendar__yearSelectorWrapper::after {
+  background-image: linear-gradient(to bottom, #0f172a, #0f172a 10%, rgba(15, 23, 42, 0));
+}
+
+.dark .Calendar__yearSelectorWrapper::before,
+[data-theme='dark'] .Calendar__yearSelectorWrapper::before {
+  background-image: linear-gradient(to top, #0f172a, #0f172a 10%, rgba(15, 23, 42, 0));
+}
+
+.dark .Calendar__monthYear.-shown > *:hover,
+.dark .Calendar:not(.-noFocusOutline) .Calendar__monthYear.-shown > *:focus,
+.dark .Calendar__monthYear > *.-activeBackground,
+[data-theme='dark'] .Calendar__monthYear.-shown > *:hover,
+[data-theme='dark'] .Calendar:not(.-noFocusOutline) .Calendar__monthYear.-shown > *:focus,
+[data-theme='dark'] .Calendar__monthYear > *.-activeBackground {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dark .Calendar__monthSelectorItem:not(.-active) .Calendar__monthSelectorItemText:not(:disabled):hover,
+.dark .Calendar__yearSelectorItem:not(.-active) .Calendar__yearSelectorText:not(:disabled):hover,
+[data-theme='dark'] .Calendar__monthSelectorItem:not(.-active) .Calendar__monthSelectorItemText:not(:disabled):hover,
+[data-theme='dark'] .Calendar__yearSelectorItem:not(.-active) .Calendar__yearSelectorText:not(:disabled):hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}

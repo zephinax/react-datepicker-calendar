@@ -2,3 +2,13 @@
 @import 'fumadocs-ui/css/dusk.css';
 @import 'fumadocs-ui/css/preset.css';
 @import '@zephinax/react-datepicker-calendar/style.css';
+
+:root {
+  --cl-color-primary: hsl(340, 65%, 48%);
+  --cl-color-primary-light: hsl(340, 70%, 93%);
+}
+
+.dark {
+  --cl-color-primary: hsl(340, 80%, 65%);
+  --cl-color-primary-light: hsl(340, 40%, 18%);
+}

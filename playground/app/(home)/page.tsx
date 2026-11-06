@@ -17,19 +17,38 @@ import {
   ArrowRight,
   ExternalLink,
   Layers,
+  Eye,
+  Code2,
+  Sliders,
+  RotateCcw,
 } from 'lucide-react';
 
 type Mode = 'single' | 'range' | 'multi';
 type LocaleOption = 'en' | 'fa';
 type ViewComponent = 'datepicker' | 'calendar';
 type PkgManager = 'bun' | 'npm' | 'pnpm' | 'yarn';
+type Tab = 'preview' | 'code';
+
+const ACCENT_COLORS = [
+  { name: 'Rose (Fumadocs)', color: '#e11d48', light: '#ffe4e6' },
+  { name: 'Indigo', color: '#6366f1', light: '#e0e7ff' },
+  { name: 'Emerald', color: '#10b981', light: '#d1fae5' },
+  { name: 'Sky', color: '#0ea5e9', light: '#e0f2fe' },
+  { name: 'Amber', color: '#f59e0b', light: '#fef3c7' },
+  { name: 'Purple', color: '#a855f7', light: '#f3e8ff' },
+];
 
 export default function HomePage() {
+  const [activeTab, setActiveTab] = useState<Tab>('preview');
   const [mode, setMode] = useState<Mode>('single');
   const [locale, setLocale] = useState<LocaleOption>('en');
   const [viewComponent, setViewComponent] = useState<ViewComponent>('datepicker');
+  const [selectedAccent, setSelectedAccent] = useState(ACCENT_COLORS[0]);
+  const [highlightWeekends, setHighlightWeekends] = useState(true);
+  const [hasRestrictions, setHasRestrictions] = useState(false);
   const [pkgManager, setPkgManager] = useState<PkgManager>('bun');
   const [copied, setCopied] = useState(false);
+  const [codeCopied, setCodeCopied] = useState(false);
 
   // Demo selection states
   const today = utils(locale).getToday();
@@ -57,9 +76,37 @@ export default function HomePage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const copyCode = () => {
+    navigator.clipboard.writeText(getActiveCode());
+    setCodeCopied(true);
+    setTimeout(() => setCodeCopied(false), 2000);
+  };
+
+  const resetValues = () => {
+    const curToday = utils(locale).getToday();
+    setSingleValue(curToday);
+    setRangeValue({
+      from: curToday,
+      to: { ...curToday, day: Math.min(curToday.day + 5, 28) },
+    });
+    setMultiValue([
+      curToday,
+      { ...curToday, day: Math.min(curToday.day + 3, 28) },
+      { ...curToday, day: Math.min(curToday.day + 7, 28) },
+    ]);
+  };
+
   const getActiveCode = () => {
     const isDatePicker = viewComponent === 'datepicker';
     const compName = isDatePicker ? 'DatePicker' : 'Calendar';
+    const weekendProp = highlightWeekends ? '  shouldHighlightWeekends\n' : '';
+    const restrictionProp = hasRestrictions
+      ? `  minimumDate={{ year: ${today.year}, month: ${today.month}, day: 1 }}\n`
+      : '';
+    const colorProp =
+      selectedAccent.color !== '#e11d48'
+        ? `  colorPrimary="${selectedAccent.color}"\n  colorPrimaryLight="${selectedAccent.light}"\n`
+        : '';
 
     if (mode === 'single') {
       return `import ${compName}, { utils } from '@zephinax/react-datepicker-calendar';
@@ -73,8 +120,7 @@ export function Example() {
       value={selectedDay}
       onChange={setSelectedDay}
       locale="${locale}"
-      shouldHighlightWeekends
-    />
+${weekendProp}${restrictionProp}${colorProp}    />
   );
 }`;
     }
@@ -94,8 +140,7 @@ export function Example() {
       value={selectedRange}
       onChange={setSelectedRange}
       locale="${locale}"
-      shouldHighlightWeekends
-    />
+${weekendProp}${restrictionProp}${colorProp}    />
   );
 }`;
     }
@@ -113,8 +158,7 @@ export function Example() {
       value={selectedDays}
       onChange={setSelectedDays}
       locale="${locale}"
-      shouldHighlightWeekends
-    />
+${weekendProp}${restrictionProp}${colorProp}    />
   );
 }`;
   };
@@ -213,47 +257,125 @@ export function Example() {
           </div>
         </section>
 
-        {/* Interactive Live Demo Playground */}
-        <section className="flex flex-col gap-6 rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-xl ring-1 ring-slate-200/60 backdrop-blur dark:border-slate-800 dark:bg-slate-900/90 dark:ring-slate-800/60 sm:p-8 lg:p-10">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/80 pb-6 dark:border-slate-800">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">
-                Interactive Showcase
-              </p>
-              <h2 className="mt-1 text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
-                Test the Datepicker & Calendar live
-              </h2>
+        {/* Fumadocs Component Preview */}
+        <section className="flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl ring-1 ring-slate-200/60 dark:border-slate-800 dark:bg-slate-900/90 dark:ring-slate-800/60">
+          {/* Card Header with Preview / Code Tabs */}
+          <div className="flex flex-wrap items-center justify-between border-b border-slate-200/80 bg-slate-50/70 px-6 py-4 dark:border-slate-800 dark:bg-slate-950/70">
+            <div className="flex items-center gap-3">
+              <div className="inline-flex rounded-xl bg-slate-200/60 p-1 dark:bg-slate-800">
+                <button
+                  onClick={() => setActiveTab('preview')}
+                  className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
+                    activeTab === 'preview'
+                      ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white'
+                      : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'
+                  }`}
+                >
+                  <Eye className="h-3.5 w-3.5" />
+                  <span>Preview</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('code')}
+                  className={`inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
+                    activeTab === 'code'
+                      ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white'
+                      : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'
+                  }`}
+                >
+                  <Code2 className="h-3.5 w-3.5" />
+                  <span>Code</span>
+                </button>
+              </div>
+
+              <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 font-mono text-[11px] font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                &lt;{viewComponent === 'datepicker' ? 'DatePicker' : 'Calendar'} /&gt;
+              </span>
             </div>
 
-            {/* Component and Locale Selector Pills */}
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex rounded-xl bg-slate-100 p-1 dark:bg-slate-800">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={resetValues}
+                title="Reset selection values"
+                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Reset</span>
+              </button>
+
+              {activeTab === 'code' && (
+                <button
+                  onClick={copyCode}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 transition"
+                >
+                  {codeCopied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                  <span>{codeCopied ? 'Copied' : 'Copy Code'}</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Interactive Controls Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200/80 bg-white px-6 py-3.5 dark:border-slate-800 dark:bg-slate-900/60">
+            {/* Component Switcher */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                Type:
+              </span>
+              <div className="inline-flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
                 <button
                   onClick={() => setViewComponent('datepicker')}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                  className={`rounded-md px-2.5 py-1 text-xs font-semibold transition ${
                     viewComponent === 'datepicker'
                       ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white'
                       : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'
                   }`}
                 >
-                  &lt;DatePicker /&gt;
+                  DatePicker (Popup)
                 </button>
                 <button
                   onClick={() => setViewComponent('calendar')}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                  className={`rounded-md px-2.5 py-1 text-xs font-semibold transition ${
                     viewComponent === 'calendar'
                       ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white'
                       : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'
                   }`}
                 >
-                  &lt;Calendar /&gt;
+                  Calendar (Inline)
                 </button>
               </div>
+            </div>
 
-              <div className="inline-flex rounded-xl bg-slate-100 p-1 dark:bg-slate-800">
+            {/* Mode Switcher */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                Mode:
+              </span>
+              <div className="inline-flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
+                {(['single', 'range', 'multi'] as Mode[]).map(m => (
+                  <button
+                    key={m}
+                    onClick={() => setMode(m)}
+                    className={`rounded-md px-2.5 py-1 text-xs font-semibold capitalize transition ${
+                      mode === m
+                        ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white'
+                        : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'
+                    }`}
+                  >
+                    {m}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Locale Switcher */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                Locale:
+              </span>
+              <div className="inline-flex rounded-lg bg-slate-100 p-0.5 dark:bg-slate-800">
                 <button
                   onClick={() => setLocale('en')}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                  className={`rounded-md px-2.5 py-1 text-xs font-semibold transition ${
                     locale === 'en'
                       ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white'
                       : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'
@@ -263,7 +385,7 @@ export function Example() {
                 </button>
                 <button
                   onClick={() => setLocale('fa')}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                  className={`rounded-md px-2.5 py-1 text-xs font-semibold transition ${
                     locale === 'fa'
                       ? 'bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white'
                       : 'text-slate-600 hover:text-slate-900 dark:text-slate-300'
@@ -273,123 +395,200 @@ export function Example() {
                 </button>
               </div>
             </div>
-          </div>
 
-          {/* Mode Selector Tabs */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Mode:</span>
-            {(['single', 'range', 'multi'] as Mode[]).map(m => (
-              <button
-                key={m}
-                onClick={() => setMode(m)}
-                className={`rounded-lg border px-3.5 py-1.5 text-xs font-semibold capitalize transition ${
-                  mode === m
-                    ? 'border-slate-900 bg-slate-900 text-white dark:border-white dark:bg-white dark:text-slate-900'
-                    : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'
-                }`}
-              >
-                {m === 'single' ? 'Single date' : m === 'range' ? 'Date range' : 'Multiple dates'}
-              </button>
-            ))}
-          </div>
-
-          {/* Interactive Component and Code Grid */}
-          <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
-            {/* Interactive Preview Panel */}
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-slate-200 bg-slate-50/60 p-6 min-h-[380px] dark:border-slate-800 dark:bg-slate-950/60 lg:col-span-5">
-              {viewComponent === 'datepicker' ? (
-                <div className="w-full flex flex-col items-center gap-3">
-                  <span className="text-xs text-slate-500 dark:text-slate-400">
-                    Click input to open popper calendar:
-                  </span>
-                  {mode === 'single' && (
-                    <DatePicker
-                      value={singleValue}
-                      onChange={setSingleValue}
-                      locale={locale}
-                      inputPlaceholder="Select date"
-                      shouldHighlightWeekends
-                    />
-                  )}
-                  {mode === 'range' && (
-                    <DatePicker
-                      value={rangeValue}
-                      onChange={setRangeValue}
-                      locale={locale}
-                      inputPlaceholder="Select date range"
-                      shouldHighlightWeekends
-                    />
-                  )}
-                  {mode === 'multi' && (
-                    <DatePicker
-                      value={multiValue}
-                      onChange={setMultiValue}
-                      locale={locale}
-                      inputPlaceholder="Select multiple dates"
-                      shouldHighlightWeekends
-                    />
-                  )}
-                </div>
-              ) : (
-                <div className="w-full flex flex-col items-center">
-                  {mode === 'single' && (
-                    <Calendar
-                      value={singleValue}
-                      onChange={setSingleValue}
-                      locale={locale}
-                      shouldHighlightWeekends
-                    />
-                  )}
-                  {mode === 'range' && (
-                    <Calendar
-                      value={rangeValue}
-                      onChange={setRangeValue}
-                      locale={locale}
-                      shouldHighlightWeekends
-                    />
-                  )}
-                  {mode === 'multi' && (
-                    <Calendar
-                      value={multiValue}
-                      onChange={setMultiValue}
-                      locale={locale}
-                      shouldHighlightWeekends
-                    />
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Live Code and Output Inspector */}
-            <div className="flex flex-col gap-4 lg:col-span-7">
-              {/* Code Card */}
-              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-950">
-                <div className="flex items-center justify-between border-b border-slate-200 px-4 py-2.5 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
-                  <span className="font-semibold text-slate-800 dark:text-slate-200">
-                    Live Component Code
-                  </span>
-                  <span className="rounded bg-slate-100 px-2 py-0.5 text-[10px] font-mono dark:bg-slate-800">
-                    TypeScript
-                  </span>
-                </div>
-                <pre className="overflow-x-auto p-4 text-xs font-mono leading-relaxed text-slate-800 dark:text-slate-200">
-                  <code>{getActiveCode()}</code>
-                </pre>
-              </div>
-
-              {/* State JSON Output */}
-              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-950">
-                <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-                  <span className="font-semibold text-slate-800 dark:text-slate-200">
-                    Current value state ({mode})
-                  </span>
-                </div>
-                <pre className="mt-2 overflow-x-auto rounded-lg bg-slate-50 p-3 text-xs font-mono text-emerald-600 dark:bg-slate-900 dark:text-emerald-400">
-                  <code>{getCurrentDisplayValue()}</code>
-                </pre>
+            {/* Accent Color Swatches */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                Accent:
+              </span>
+              <div className="flex items-center gap-1.5">
+                {ACCENT_COLORS.map(accent => (
+                  <button
+                    key={accent.name}
+                    onClick={() => setSelectedAccent(accent)}
+                    title={accent.name}
+                    className={`h-5 w-5 rounded-full transition-transform ${
+                      selectedAccent.color === accent.color
+                        ? 'scale-125 ring-2 ring-slate-900 ring-offset-2 dark:ring-white dark:ring-offset-slate-900'
+                        : 'hover:scale-110 opacity-75 hover:opacity-100'
+                    }`}
+                    style={{ backgroundColor: accent.color }}
+                  />
+                ))}
               </div>
             </div>
+
+            {/* Options Toggles */}
+            <div className="flex items-center gap-3">
+              <label className="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={highlightWeekends}
+                  onChange={e => setHighlightWeekends(e.target.checked)}
+                  className="rounded border-slate-300 text-rose-600 focus:ring-rose-500"
+                />
+                <span>Weekends</span>
+              </label>
+
+              <label className="flex items-center gap-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={hasRestrictions}
+                  onChange={e => setHasRestrictions(e.target.checked)}
+                  className="rounded border-slate-300 text-rose-600 focus:ring-rose-500"
+                />
+                <span>Min/Max</span>
+              </label>
+            </div>
           </div>
+
+          {/* Main Card Content (Preview or Code Tab) */}
+          {activeTab === 'preview' ? (
+            <div className="flex flex-col items-center justify-center p-8 sm:p-12 min-h-[440px] bg-slate-50/50 dark:bg-slate-950/40 relative">
+              {/* Background dot pattern */}
+              <div
+                className="absolute inset-0 opacity-[0.25] dark:opacity-[0.15] pointer-events-none"
+                style={{
+                  backgroundImage:
+                    'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)',
+                  backgroundSize: '20px 20px',
+                }}
+              />
+
+              <div className="relative z-10 w-full flex flex-col items-center justify-center gap-6">
+                {viewComponent === 'datepicker' ? (
+                  <div className="w-full flex flex-col items-center gap-4">
+                    <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                      Click the input below to trigger the themed popper:
+                    </span>
+                    {mode === 'single' && (
+                      <DatePicker
+                        value={singleValue}
+                        onChange={setSingleValue}
+                        locale={locale}
+                        colorPrimary={selectedAccent.color}
+                        colorPrimaryLight={selectedAccent.light}
+                        shouldHighlightWeekends={highlightWeekends}
+                        minimumDate={
+                          hasRestrictions
+                            ? { year: today.year, month: today.month, day: 1 }
+                            : null
+                        }
+                        inputPlaceholder="Select date"
+                      />
+                    )}
+                    {mode === 'range' && (
+                      <DatePicker
+                        value={rangeValue}
+                        onChange={setRangeValue}
+                        locale={locale}
+                        colorPrimary={selectedAccent.color}
+                        colorPrimaryLight={selectedAccent.light}
+                        shouldHighlightWeekends={highlightWeekends}
+                        minimumDate={
+                          hasRestrictions
+                            ? { year: today.year, month: today.month, day: 1 }
+                            : null
+                        }
+                        inputPlaceholder="Select date range"
+                      />
+                    )}
+                    {mode === 'multi' && (
+                      <DatePicker
+                        value={multiValue}
+                        onChange={setMultiValue}
+                        locale={locale}
+                        colorPrimary={selectedAccent.color}
+                        colorPrimaryLight={selectedAccent.light}
+                        shouldHighlightWeekends={highlightWeekends}
+                        minimumDate={
+                          hasRestrictions
+                            ? { year: today.year, month: today.month, day: 1 }
+                            : null
+                        }
+                        inputPlaceholder="Select multiple dates"
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <div className="w-full flex flex-col items-center">
+                    {mode === 'single' && (
+                      <Calendar
+                        value={singleValue}
+                        onChange={setSingleValue}
+                        locale={locale}
+                        colorPrimary={selectedAccent.color}
+                        colorPrimaryLight={selectedAccent.light}
+                        shouldHighlightWeekends={highlightWeekends}
+                        minimumDate={
+                          hasRestrictions
+                            ? { year: today.year, month: today.month, day: 1 }
+                            : null
+                        }
+                      />
+                    )}
+                    {mode === 'range' && (
+                      <Calendar
+                        value={rangeValue}
+                        onChange={setRangeValue}
+                        locale={locale}
+                        colorPrimary={selectedAccent.color}
+                        colorPrimaryLight={selectedAccent.light}
+                        shouldHighlightWeekends={highlightWeekends}
+                        minimumDate={
+                          hasRestrictions
+                            ? { year: today.year, month: today.month, day: 1 }
+                            : null
+                        }
+                      />
+                    )}
+                    {mode === 'multi' && (
+                      <Calendar
+                        value={multiValue}
+                        onChange={setMultiValue}
+                        locale={locale}
+                        colorPrimary={selectedAccent.color}
+                        colorPrimaryLight={selectedAccent.light}
+                        shouldHighlightWeekends={highlightWeekends}
+                        minimumDate={
+                          hasRestrictions
+                            ? { year: today.year, month: today.month, day: 1 }
+                            : null
+                        }
+                      />
+                    )}
+                  </div>
+                )}
+
+                {/* State Value Footer Pill */}
+                <div className="flex flex-wrap items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white/90 px-4 py-2 text-xs text-slate-700 shadow-sm backdrop-blur dark:border-slate-800 dark:bg-slate-900/90 dark:text-slate-300">
+                  <span className="font-semibold text-slate-900 dark:text-white">Selected Value:</span>
+                  <code className="font-mono text-rose-600 dark:text-rose-400">
+                    {mode === 'single' &&
+                      (singleValue
+                        ? `${singleValue.year}/${String(singleValue.month).padStart(2, '0')}/${String(
+                            singleValue.day,
+                          ).padStart(2, '0')}`
+                        : 'null')}
+                    {mode === 'range' &&
+                      (rangeValue.from && rangeValue.to
+                        ? `${rangeValue.from.year}/${rangeValue.from.month}/${rangeValue.from.day} → ${rangeValue.to.year}/${rangeValue.to.month}/${rangeValue.to.day}`
+                        : rangeValue.from
+                        ? `${rangeValue.from.year}/${rangeValue.from.month}/${rangeValue.from.day} → selecting...`
+                        : 'null')}
+                    {mode === 'multi' &&
+                      `${multiValue.length} day${multiValue.length === 1 ? '' : 's'} selected`}
+                  </code>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="p-6 bg-slate-950 font-mono text-xs leading-relaxed text-slate-100 overflow-x-auto min-h-[440px]">
+              <pre>
+                <code>{getActiveCode()}</code>
+              </pre>
+            </div>
+          )}
         </section>
 
         {/* Features Grid */}
@@ -463,10 +662,10 @@ export function Example() {
               <div className="mb-4 inline-flex rounded-xl bg-purple-50 p-3 text-purple-600 dark:bg-purple-950/60 dark:text-purple-400">
                 <Palette className="h-6 w-6" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">CSS Variable Theming</h3>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Adaptive Theme Support</h3>
               <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-                Customize primary and accent colors seamlessly via <code>colorPrimary</code>, CSS
-                variables, or inject custom class names for specific milestone days.
+                Natively matches your application&apos;s theme across light and dark modes with CSS variable
+                inheritance, backdrop blurs, and instant custom accent styling.
               </p>
             </article>
           </div>

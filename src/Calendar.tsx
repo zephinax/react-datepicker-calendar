@@ -26,8 +26,8 @@ const CalendarComponent = React.forwardRef<HTMLDivElement, CalendarProps<Value>>
       calendarRangeBetweenClassName,
       calendarRangeEndClassName,
       disabledDays,
-      colorPrimary = '#d24670',
-      colorPrimaryLight = '#edadc0',
+      colorPrimary,
+      colorPrimaryLight,
       slideAnimationDuration = '0.4s',
       minimumDate = null,
       maximumDate = null,
@@ -136,9 +136,9 @@ const CalendarComponent = React.forwardRef<HTMLDivElement, CalendarProps<Value>>
         role="grid"
         style={
           {
-            '--cl-color-primary': colorPrimary,
-            '--cl-color-primary-light': colorPrimaryLight,
-            '--animation-duration': slideAnimationDuration,
+            ...(colorPrimary ? { '--cl-color-primary': colorPrimary } : {}),
+            ...(colorPrimaryLight ? { '--cl-color-primary-light': colorPrimaryLight } : {}),
+            ...(slideAnimationDuration ? { '--animation-duration': slideAnimationDuration } : {}),
           } as React.CSSProperties
         }
         ref={calendarElement}
